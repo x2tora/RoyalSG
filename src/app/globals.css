@@ -1047,3 +1047,101 @@ md-outlined-icon-button:not(:defined) {
   margin: 0;
   color: var(--md-sys-color-on-surface);
 }
+
+/* Entry and exit effects change opacity only. */
+.notice,
+.booking-times,
+.agreement-list,
+.block-row {
+  animation: surface-enter 260ms ease-out both;
+}
+.card,
+.booking-card,
+.guide {
+  transition:
+    background-color 240ms ease,
+    border-color 240ms ease,
+    color 240ms ease;
+}
+.day {
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease,
+    color 200ms ease;
+}
+.day-status,
+.badge {
+  transition:
+    background-color 200ms ease,
+    color 200ms ease;
+}
+md-filled-button,
+md-outlined-button,
+md-text-button,
+md-icon-button,
+md-outlined-icon-button,
+.google {
+  transition:
+    opacity 180ms ease,
+    background-color 200ms ease,
+    color 200ms ease,
+    border-color 200ms ease;
+}
+md-outlined-text-field,
+md-outlined-select {
+  transition: opacity 180ms ease;
+}
+.contact-link,
+footer a,
+.brand-link {
+  transition:
+    color 200ms ease,
+    background-color 200ms ease;
+}
+.calendar-title h2 {
+  animation-duration: 220ms;
+}
+.legend-item {
+  animation: surface-enter 300ms ease-out both;
+}
+.legend-item:nth-child(2) {
+  animation-delay: 35ms;
+}
+.legend-item:nth-child(3) {
+  animation-delay: 70ms;
+}
+.legend-item:nth-child(4) {
+  animation-delay: 105ms;
+}
+dialog[open] {
+  animation: dialog-enter 240ms ease-out both;
+}
+dialog[open]::backdrop {
+  animation: surface-enter 240ms ease-out both;
+}
+dialog[data-closing="true"]::backdrop {
+  animation: surface-exit 160ms ease-in both;
+}
+@keyframes surface-exit {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  .brand-link:hover,
+  .contact-link:hover,
+  footer a:hover {
+    color: var(--md-sys-color-primary);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

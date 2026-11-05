@@ -12,6 +12,27 @@ export default function Modal({
 }) {
   const ref = useRef<HTMLDialogElement>(null),
     titleId = useId();
+  const closing = useRef(false);
+  async function dismiss() {
+    const dialog = ref.current;
+    if (!dialog || closing.current) return;
+    closing.current = true;
+    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      dialog.dataset.closing = "true";
+      const animation = dialog.animate([{ opacity: 1 }, { opacity: 0 }], {
+        duration: 160,
+        easing: "ease-in",
+        fill: "forwards",
+      });
+      try {
+        await animation.finished;
+      } catch {}
+      onClose();
+      animation.cancel();
+      delete dialog.dataset.closing;
+    } else onClose();
+    closing.current = false;
+  }
   useLayoutEffect(() => {
     const dialog = ref.current;
     dialog?.showModal();
@@ -23,7 +44,7 @@ export default function Modal({
       aria-labelledby={titleId}
       onCancel={(event) => {
         event.preventDefault();
-        onClose();
+        void dismiss();
       }}
       onClick={(event) => {
         if (event.target !== event.currentTarget) return;
@@ -34,7 +55,7 @@ export default function Modal({
           event.clientY < bounds.top ||
           event.clientY > bounds.bottom
         )
-          onClose();
+          void dismiss();
       }}
     >
       <div className="dialog-heading">
@@ -43,7 +64,7 @@ export default function Modal({
           kind="icon-button"
           type="button"
           aria-label="닫기"
-          onClick={onClose}
+          onClick={() => void dismiss()}
         >
           <svg
             width="24"
