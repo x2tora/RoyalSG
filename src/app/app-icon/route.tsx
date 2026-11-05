@@ -3,8 +3,9 @@ import { ImageResponse } from "next/og";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 export async function GET(request: Request) {
-  const size =
-    new URL(request.url).searchParams.get("size") === "192" ? 192 : 512;
+  const params = new URL(request.url).searchParams;
+  const size = params.get("size") === "192" ? 192 : 512;
+  const maskable = params.get("purpose") === "maskable";
   const logo = await readFile(join(process.cwd(), "public/logo.png"));
   return new ImageResponse(
     <div
@@ -14,16 +15,27 @@ export async function GET(request: Request) {
         height: "100%",
         alignItems: "center",
         justifyContent: "center",
-        background: "#171319",
       }}
     >
-      <img
-        src={`data:image/png;base64,${logo.toString("base64")}`}
-        width={size * 0.7}
-        height={size * 0.7}
-        alt=""
-        style={{ objectFit: "contain" }}
-      />
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          width: maskable ? size : size * 0.88,
+          height: maskable ? size : size * 0.88,
+          borderRadius: maskable ? 0 : size * 0.2,
+          background: "#171319",
+        }}
+      >
+        <img
+          src={`data:image/png;base64,${logo.toString("base64")}`}
+          width={size * (maskable ? 0.56 : 0.64)}
+          height={size * (maskable ? 0.56 : 0.64)}
+          alt=""
+          style={{ objectFit: "contain" }}
+        />
+      </div>
     </div>,
     {
       width: size,
