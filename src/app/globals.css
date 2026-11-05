@@ -430,8 +430,13 @@ dialog,
 }
 .guide ul {
   padding-left: 20px;
-  margin: 0 0 20px;
+  margin: 0;
   color: var(--md-sys-color-on-surface-variant);
+}
+.guide ul + ul {
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+  margin-top: 16px;
+  padding-top: 16px;
 }
 .guide li {
   margin: 8px 0;
