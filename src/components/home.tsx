@@ -756,6 +756,11 @@ function Admin({
         endsAt(b.rental_date) > now;
       return showHistory ? !current : current;
     }) ?? [];
+  if (showHistory) {
+    bookings.sort((a, b) =>
+      (b.created_at ?? "").localeCompare(a.created_at ?? ""),
+    );
+  }
   return (
     <section>
       <div className="section-heading">
