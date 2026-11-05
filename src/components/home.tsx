@@ -724,7 +724,11 @@ function BookingCard({ booking: b }: { booking: Booking }) {
         </p>
         <small>이용 {addDays(b.rental_date, 1)} 00:00~05:00</small>
       </div>
-      <span className={"badge " + b.status}>{statusText[b.status]}</span>
+      <span className={"badge " + b.status}>
+        {b.status === "cancelled" && b.cancelled_by_self
+          ? "본인 취소"
+          : statusText[b.status]}
+      </span>
     </article>
   );
 }
@@ -815,7 +819,7 @@ function Admin({
               {[
                 ["신청", b.created_at],
                 ["승인", b.confirmed_at],
-                ["취소", b.cancelled_at],
+                [b.cancelled_by_self ? "본인 취소" : "취소", b.cancelled_at],
                 ["거절", b.rejected_at],
               ].map(([label, value]) => (
                 <div key={label}>

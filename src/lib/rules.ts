@@ -12,6 +12,7 @@ export type Booking = {
   created_at?: string;
   confirmed_at?: string | null;
   cancelled_at?: string | null;
+  cancelled_by_self?: boolean;
   rejected_at?: string | null;
   user_id?: string;
   name?: string;

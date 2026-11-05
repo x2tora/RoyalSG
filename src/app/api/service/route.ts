@@ -32,7 +32,7 @@ export async function GET() {
       db.from("profiles").select("name,phone").eq("id", user.id).maybeSingle(),
       db
         .from("bookings")
-        .select("id,rental_date,machine,people,price,status")
+        .select("id,rental_date,machine,people,price,status,cancelled_by_self")
         .eq("user_id", user.id)
         .order("rental_date", { ascending: false }),
       db.rpc("is_admin"),
