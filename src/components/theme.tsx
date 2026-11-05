@@ -1,12 +1,6 @@
 "use client";
 import { Md } from "./material";
 import { useEffect, useState } from "react";
-import {
-  applyTheme,
-  argbFromHex,
-  hexFromArgb,
-  themeFromSourceColor,
-} from "@material/material-color-utilities";
 export default function Theme() {
   const [mode, setMode] = useState("light"),
     [ready, setReady] = useState(false);
@@ -28,31 +22,8 @@ export default function Theme() {
   }, []);
   useEffect(() => {
     if (!ready) return;
-    const update = () => {
-      const dark = mode === "dark";
-      const theme = themeFromSourceColor(argbFromHex("#776391"));
-      applyTheme(theme, {
-        target: document.documentElement,
-        dark,
-      });
-      const surfaceTones = {
-        surface: dark ? 6 : 98,
-        "surface-container-lowest": dark ? 4 : 100,
-        "surface-container-low": dark ? 10 : 96,
-        "surface-container": dark ? 12 : 94,
-        "surface-container-high": dark ? 17 : 92,
-        "surface-container-highest": dark ? 22 : 90,
-      };
-      for (const [token, tone] of Object.entries(surfaceTones)) {
-        document.documentElement.style.setProperty(
-          `--md-sys-color-${token}`,
-          hexFromArgb(theme.palettes.neutral.tone(tone)),
-        );
-      }
-      document.documentElement.style.colorScheme = dark ? "dark" : "light";
-      document.documentElement.dataset.theme = dark ? "dark" : "light";
-    };
-    update();
+    document.documentElement.style.colorScheme = mode;
+    document.documentElement.dataset.theme = mode;
     try {
       localStorage.setItem("royalsg-theme-v1", JSON.stringify({ mode }));
     } catch {}
