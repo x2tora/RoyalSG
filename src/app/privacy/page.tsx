@@ -61,22 +61,74 @@ export default function Privacy() {
       </p>
       <h2>3. 처리 위탁과 서비스 제공업체</h2>
       <p>
-        Supabase는 인증 및 데이터베이스 운영을, Vercel은 웹 호스팅과 서비스 요청
-        처리를 담당합니다. Google 로그인은 Google 계정 인증을 이용하며 Google의
-        개인정보 처리방침도 적용됩니다. 예약자의 이름과 연락처는 운영 담당자만
-        확인하며 공개 캘린더에는 기체·인원·상태만 표시합니다.
+        Supabase, Inc. 및 Supabase Pte. Ltd.는 인증·데이터베이스와 운영 지원을,
+        Vercel, Inc.는 웹 호스팅과 서비스 요청 처리를 담당합니다. Google LLC의
+        Google 로그인은 Google 계정 인증을 이용하며 Google의 개인정보 처리방침도
+        적용됩니다. 예약자의 이름과 연락처는 운영 담당자만 확인하며 공개
+        캘린더에는 기체·인원·상태만 표시합니다.
       </p>
       <h2>4. 국외 처리 안내</h2>
       <p>
-        데이터베이스는 Supabase 서울 리전에 구성합니다. 다만 Google 인증,
-        Supabase의 인증·지원 및 하위처리자, Vercel의 글로벌 인프라를 통해 계정
-        식별정보·접속정보 등 일부 정보가 국외에서 처리될 수 있습니다.
+        회원·예약 데이터베이스와 Supabase 인증 서비스는 대한민국 서울 리전에, 웹
+        API 실행 위치는 Vercel 서울 리전에 구성합니다. 다만 서비스 제공에 필요한
+        인증 통신, 글로벌 네트워크 전달, 운영·보안 로그 및 장애 지원 과정에서는
+        국외 처리가 발생할 수 있습니다. 로그인·회원가입·예약 및 서비스 접속 시
+        암호화된 네트워크로 전송되며, 운영자는 광고나 판매 목적으로 정보를
+        이전하지 않습니다.
       </p>
+      <ul>
+        <li>
+          Supabase, Inc.(미국), Supabase Pte. Ltd.(싱가포르): 인증·예약 저장 및
+          운영 지원에 필요한 계정·회원·예약 정보. 핵심 데이터는 서울에 저장하고
+          운영 로그는 EU 소재 데이터센터에서 처리될 수 있습니다. 회원·예약
+          정보의 보유 기간은 제2항을 따르며 로그·백업은 제공업체의 설정과 파기
+          주기를 따릅니다. 문의: privacy@supabase.io.
+        </li>
+        <li>
+          Vercel, Inc.(미국 및 글로벌 인프라 운영 국가): 웹 요청 처리에 필요한
+          IP·접속 정보·인증 쿠키 및 요청 데이터. 요청 처리와 보안·장애 대응을
+          위해 처리하며 운영 로그는 제공업체의 보유 설정에 따라 파기합니다.
+          문의: privacy@vercel.com.
+        </li>
+        <li>
+          Google LLC(미국 및 Google 서버 운영 국가): 로그인 인증에 필요한
+          계정·접속 정보와 프로필 이미지 요청. Google 계정 자체의 보유·삭제는
+          Google 정책과 이용자 계정 설정을 따릅니다.
+        </li>
+      </ul>
       <p>
-        공개 서비스 시작 전 실제 계약 당사자, 수탁자·이전 국가, 이전
-        항목·시기·방법, 보유 기간, 이전 근거와 거부 방법을 확정하여 이 항목에
-        고지합니다. 해당 설정과 고지가 완료되기 전에는 신규 회원가입을 열지
-        않습니다.
+        서비스 제공업체의 세부 처리 위치와 하위처리자는{" "}
+        <a
+          href="https://supabase.com/legal/privacy-resources/data-residency-and-transfers-faq"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Supabase 데이터 처리 안내
+        </a>
+        ,{" "}
+        <a
+          href="https://supabase.com/legal/customer-resources/subprocessor-list"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Supabase 하위처리자 목록
+        </a>
+        ,{" "}
+        <a href="https://vercel.com/legal/dpa" target="_blank" rel="noreferrer">
+          Vercel 데이터 처리 계약
+        </a>
+        ,{" "}
+        <a
+          href="https://policies.google.com/privacy?hl=ko"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Google 개인정보 처리방침
+        </a>
+        에서 확인할 수 있습니다. 이전·위탁에 관한 문의와 처리정지 요청은
+        로얄상구 카카오 문의로 접수합니다. 해당 처리를 원하지 않으면 Google
+        로그인을 이용하지 않고 공개 일정만 조회할 수 있습니다. 서비스에 필수적인
+        처리가 제한되면 로그인과 예약 이용이 제한될 수 있습니다.
       </p>
       <h2>5. 이용자의 권리</h2>
       <p>

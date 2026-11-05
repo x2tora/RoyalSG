@@ -73,6 +73,11 @@ export async function POST(request: NextRequest) {
       { error: "허용되지 않은 요청입니다." },
       { status: 403 },
     );
+  if (!configured())
+    return NextResponse.json(
+      { error: "서비스 연결을 준비 중입니다." },
+      { status: 503 },
+    );
   try {
     const db = await supabase(),
       body = await request.json();
@@ -80,8 +85,19 @@ export async function POST(request: NextRequest) {
       data: { user },
     } = await db.auth.getUser();
     if (body.action === "login") {
-      if (process.env.PRIVACY_READY !== "true")
-        throw new Error("개인정보 처리방침 및 로그인 설정을 준비 중입니다.");
+      const settings = await fetch(
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/settings`,
+        {
+          headers: {
+            apikey: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+          },
+          cache: "no-store",
+        },
+      );
+      if (!settings.ok || !(await settings.json()).external?.google)
+        throw new Error(
+          "Google 로그인 설정을 준비 중입니다. 잠시 후 다시 시도해 주세요.",
+        );
       const base = process.env.NEXT_PUBLIC_SITE_URL;
       if (!base) throw new Error("로그인 주소를 설정 중입니다.");
       const { data, error } = await db.auth.signInWithOAuth({

@@ -113,3 +113,27 @@ test("5일 전 전화번호와 최종 확인 후 탈퇴 요청", async ({ page }
     phone: "010-1234-5678",
   });
 });
+test("관리자 승인 확인과 날짜 차단 처리", async ({ page }) => {
+  const state = initial();
+  state.admin = true;
+  state.dashboard = { bookings: [booking], blocks: [] };
+  const commands = await mock(page, state);
+  await page.getByRole("button", { name: "관리자", exact: true }).click();
+  await page.getByRole("button", { name: "승인", exact: true }).click();
+  await expect(page.getByRole("dialog")).toBeVisible();
+  await page.getByRole("button", { name: "확인", exact: true }).click();
+  await expect(page.getByRole("dialog")).not.toBeVisible();
+  expect(commands[0]).toMatchObject({
+    action: "review",
+    id: booking.id,
+    status: "confirmed",
+  });
+  await page.getByLabel("차단할 예약 날짜").fill("2026-11-12");
+  await page.getByRole("button", { name: "차단", exact: true }).click();
+  await expect.poll(() => commands.length).toBe(2);
+  expect(commands[1]).toMatchObject({
+    action: "block",
+    date: "2026-11-12",
+    blocked: true,
+  });
+});

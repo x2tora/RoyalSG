@@ -76,6 +76,24 @@ afterAll(async () => {
   await db?.close();
 });
 describe("실제 마이그레이션 PostgreSQL 동작", () => {
+  it("Google 이외의 계정과 폐기된 세션 요청을 차단", async () => {
+    await db.exec(
+      `reset role; delete from auth.identities where user_id='${a}'; set role authenticated;`,
+    );
+    await expect(
+      db.exec("select public.create_booking('2026-11-08','A',1)"),
+    ).rejects.toThrow("Google 계정");
+    await db.exec(
+      `reset role; delete from auth.sessions where user_id='${a}'; set role authenticated;`,
+    );
+    await expect(
+      db.exec("select public.delete_account('010-1234-5678')"),
+    ).rejects.toThrow("로그인이 필요");
+    expect(
+      (await scalar("select count(*)::integer as count from public.profiles"))
+        ?.count,
+    ).toBe(0);
+  });
   it("21시 공개, 요일, 당일 및 범위 검증", async () => {
     await time("2026-11-05T20:59:59+09:00");
     await expect(

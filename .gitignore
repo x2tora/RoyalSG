@@ -7,6 +7,7 @@ test-results/
 playwright-report/
 supabase/.temp/
 *.tsbuildinfo
+next-env.d.ts
 
 .vercel
 .env*

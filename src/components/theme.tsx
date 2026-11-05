@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import {
   applyTheme,
   argbFromHex,
+  hexFromArgb,
   themeFromSourceColor,
 } from "@material/material-color-utilities";
 export default function Theme() {
@@ -28,10 +29,25 @@ export default function Theme() {
     const media = matchMedia("(prefers-color-scheme: dark)");
     const update = () => {
       const dark = mode === "system" ? media.matches : mode === "dark";
-      applyTheme(themeFromSourceColor(argbFromHex(color)), {
+      const theme = themeFromSourceColor(argbFromHex(color));
+      applyTheme(theme, {
         target: document.documentElement,
         dark,
       });
+      const surfaceTones = {
+        surface: dark ? 6 : 98,
+        "surface-container-lowest": dark ? 4 : 100,
+        "surface-container-low": dark ? 10 : 96,
+        "surface-container": dark ? 12 : 94,
+        "surface-container-high": dark ? 17 : 92,
+        "surface-container-highest": dark ? 22 : 90,
+      };
+      for (const [token, tone] of Object.entries(surfaceTones)) {
+        document.documentElement.style.setProperty(
+          `--md-sys-color-${token}`,
+          hexFromArgb(theme.palettes.neutral.tone(tone)),
+        );
+      }
       document.documentElement.style.colorScheme = dark ? "dark" : "light";
     };
     update();

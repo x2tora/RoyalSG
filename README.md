@@ -40,8 +40,8 @@ npm run dev
 1. Google Cloud에서 웹 OAuth 클라이언트를 생성합니다.
 2. 승인된 리디렉션 URI: `https://ugmoisarxveuyuvhnhqi.supabase.co/auth/v1/callback`.
 3. Supabase Authentication → Providers → Google에 Client ID·Secret을 직접 저장합니다.
-4. Supabase URL Configuration에 운영 사이트 URL과 정확한 `/auth/callback` 주소를 등록합니다. 개발은 `http://localhost:3000/auth/callback`.
-5. 개인정보 처리방침의 실제 국외 처리 고지와 계약 설정을 확정합니다. `PRIVACY_READY=true`는 확정 후 설정합니다. 그 전에는 앱의 Google 로그인 시작을 차단합니다.
+4. Supabase URL Configuration의 Site URL은 `https://royalsg.vercel.app`, Redirect URLs는 `https://royalsg.vercel.app/auth/callback`으로 설정합니다. 개발은 `http://localhost:3000/auth/callback`을 추가합니다.
+5. Google 로그인이 비활성화되어 있으면 로그인 시작 시 설정 안내를 표시합니다.
 
 비밀키는 브라우저·GitHub에 저장하지 않습니다. 앱은 publishable key와 사용자 세션만 사용하며 service role 키가 필요하지 않습니다.
 
@@ -49,7 +49,7 @@ npm run dev
 
 저장소: `xitora/RoyalSG`, Vercel: `x1t0ra/royalsg`.
 
-운영 환경변수: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `NEXT_PUBLIC_SITE_URL`, `PRIVACY_READY`.
+운영 환경변수: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `NEXT_PUBLIC_SITE_URL`.
 
 운영 브랜치는 `main`, 그 외 브랜치는 Preview로 배포합니다. Preview에 운영 DB 환경변수를 복사하지 않습니다. 개발 Supabase를 별도 구성하기 전 Preview는 연결 준비 상태로 표시합니다. 마이그레이션은 웹 배포에서 자동 실행하지 않습니다.
 

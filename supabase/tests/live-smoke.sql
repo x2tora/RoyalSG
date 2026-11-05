@@ -5,6 +5,8 @@ insert into auth.users(id,email,email_confirmed_at)
 values(current_setting('test.user')::uuid,'royalsg-transaction-test@example.invalid',now());
 insert into auth.sessions(id,user_id)
 values(current_setting('test.user')::uuid,current_setting('test.user')::uuid);
+insert into auth.identities(provider_id,user_id,identity_data,provider)
+values(current_setting('test.user'),current_setting('test.user')::uuid,jsonb_build_object('sub',current_setting('test.user'),'email','royalsg-transaction-test@example.invalid','email_verified',true),'google');
 select set_config('request.jwt.claims',json_build_object('sub',current_setting('test.user'),'session_id',current_setting('test.user'))::text,true);
 set local role authenticated;
 select public.save_profile('트랜잭션 테스트','010-1234-5678',true,'2026-11-05');
