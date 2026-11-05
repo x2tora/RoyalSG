@@ -159,6 +159,7 @@ export default function Calendar({
                     aria-label={`${day} ${status}${detail ? ` ${detail}` : ""}`}
                     onClick={() => onSelect(day)}
                   >
+                    <Md kind="ripple" disabled={readonly || !can} />
                     <span>{i + 1}</span>
                     <span className="day-status">{status}</span>
                     {detail ? (

@@ -53,8 +53,22 @@ const statusText: Record<string, string> = {
   rejected: "거절",
   cancelled: "취소",
 };
+const CONNECTION_ERROR =
+  "인터넷 연결이 원활하지 않습니다. 잠시 후 다시 시도해 주세요.";
+async function serviceFetch(
+  options: RequestInit,
+  retry = false,
+): Promise<Response> {
+  try {
+    return await fetch("/api/service", options);
+  } catch (error) {
+    if (!(error instanceof TypeError)) throw error;
+    if (retry) return serviceFetch(options);
+    throw new Error(CONNECTION_ERROR);
+  }
+}
 async function command(action: string, args: Record<string, unknown> = {}) {
-  const response = await fetch("/api/service", {
+  const response = await serviceFetch({
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ action, ...args }),
@@ -114,13 +128,17 @@ export default function Home({
     [clock, setClock] = useState<Date | null>(null);
   const serverClock = useRef({ time: 0, received: 0 });
   const profileInitialized = useRef(false);
+  const refreshing = useRef(false);
   const selected = reservationDate ?? null;
   const refresh = useCallback(async () => {
+    if (refreshing.current) return;
+    refreshing.current = true;
     try {
-      const response = await fetch("/api/service", { cache: "no-store" }),
+      const response = await serviceFetch({ cache: "no-store" }, true),
         result = await response.json();
       if (!response.ok) throw new Error(result.error);
       setData(result);
+      setError((previous) => (previous === CONNECTION_ERROR ? "" : previous));
       if (result.user?.profile && !profileInitialized.current) {
         profileInitialized.current = true;
         setName(result.user.profile.name);
@@ -133,6 +151,8 @@ export default function Home({
       setClock(new Date(result.now));
     } catch (e) {
       setError(e instanceof Error ? e.message : "연결에 실패했습니다.");
+    } finally {
+      refreshing.current = false;
     }
   }, []);
   useEffect(() => {
@@ -470,6 +490,7 @@ export default function Home({
                       disabled={busy || !data?.configured}
                       onClick={() => void run("login")}
                     >
+                      <Md kind="ripple" disabled={busy || !data?.configured} />
                       <GoogleIcon />
                       Google로 로그인
                     </button>

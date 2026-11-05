@@ -227,6 +227,7 @@ dialog,
   scroll-snap-align: start;
   scroll-snap-stop: always;
   align-content: start;
+  padding: 6px;
 }
 .logo {
   display: block;
@@ -585,12 +586,15 @@ select option {
   gap: 4px;
 }
 .weekdays {
+  padding: 0 6px;
   text-align: center;
   color: var(--md-sys-color-on-surface-variant);
   font-size: 12px;
   margin-bottom: 8px;
 }
 .day {
+  position: relative;
+  overflow: hidden;
   min-width: 0;
   min-height: 84px;
   padding: 7px 1px;
@@ -615,7 +619,7 @@ select option {
   outline: 2px solid var(--md-sys-color-primary);
   outline-offset: 2px;
 }
-.day > span:first-child {
+.day > span:first-of-type {
   font-size: 16px;
   font-weight: 600;
 }
