@@ -8,7 +8,7 @@ export default function Modal({
 }: {
   title: string;
   children: ReactNode;
-  onClose: () => void;
+  onClose: () => void | boolean;
 }) {
   const ref = useRef<HTMLDialogElement>(null),
     titleId = useId();
@@ -27,10 +27,14 @@ export default function Modal({
       try {
         await animation.finished;
       } catch {}
-      onClose();
+      const result = onClose();
+      if (result !== false) dialog.close();
       animation.cancel();
       delete dialog.dataset.closing;
-    } else onClose();
+    } else {
+      const result = onClose();
+      if (result !== false) dialog.close();
+    }
     closing.current = false;
   }
   useLayoutEffect(() => {
