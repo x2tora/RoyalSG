@@ -1,8 +1,20 @@
 "use client";
 import { usePathname } from "next/navigation";
 import Home from "./home";
+import { useEffect } from "react";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    const preventImageSave = (event: Event) => {
+      if (event.target instanceof HTMLImageElement) event.preventDefault();
+    };
+    document.addEventListener("contextmenu", preventImageSave);
+    document.addEventListener("dragstart", preventImageSave);
+    return () => {
+      document.removeEventListener("contextmenu", preventImageSave);
+      document.removeEventListener("dragstart", preventImageSave);
+    };
+  }, []);
   const pathname = usePathname();
   const panes = {
     "/": "home",

@@ -48,6 +48,10 @@
   background: var(--md-sys-color-primary-container);
   color: var(--md-sys-color-on-primary-container);
 }
+img {
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
+}
 body {
   margin: 0;
   background: var(--md-sys-color-surface);
