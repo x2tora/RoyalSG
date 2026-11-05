@@ -362,12 +362,64 @@ footer p span {
   text-align: left;
   font-size: 13px;
 }
-.history summary {
-  cursor: pointer;
+.history h2 {
+  font-size: 17px;
   margin-bottom: 12px;
 }
 .history .booking-card {
   margin-bottom: 10px;
+}
+.booking-agreements {
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 16px;
+}
+.booking-agreements summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px;
+  cursor: pointer;
+  list-style: none;
+  font-size: 14px;
+}
+.booking-agreements summary > span {
+  color: var(--md-sys-color-primary);
+}
+.agreement-list {
+  display: grid;
+  gap: 20px;
+  padding: 4px 16px 20px;
+}
+.agreement-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+}
+.agreement-item input {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin: 2px 0 0;
+  accent-color: var(--md-sys-color-primary);
+}
+.agreement-item strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+}
+.agreement-item > span > span {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--md-sys-color-on-surface-variant);
+}
+.guide[open] summary > span {
+  font-size: 0;
+}
+.guide[open] summary > span::after {
+  content: "−";
+  font-size: 18px;
 }
 .section-heading {
   display: flex;
@@ -474,11 +526,20 @@ select option {
 .calendar-title button {
   width: 44px;
   height: 44px;
-  border: 0;
-  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 16px;
   background: var(--md-sys-color-surface-container);
-  color: inherit;
-  font-size: 24px;
+  color: var(--md-sys-color-primary);
+  transition:
+    background-color 180ms ease-in,
+    border-color 180ms ease-in;
+}
+.calendar-title button:not(:disabled):hover {
+  background: var(--md-sys-color-primary-container);
+  border-color: var(--md-sys-color-primary);
 }
 .calendar-title button:disabled {
   opacity: 0.3;
@@ -643,7 +704,8 @@ dialog > p {
   animation-delay: 1.8s;
 }
 .guide[open] ul,
-.history[open] .booking-card,
+.booking-agreements[open] .agreement-list,
+.history .booking-card,
 .welcome > .booking-card,
 .calendar-title h2 {
   animation: surface-enter 600ms cubic-bezier(0.42, 0, 1, 1) both;

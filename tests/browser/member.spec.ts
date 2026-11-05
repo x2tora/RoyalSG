@@ -71,7 +71,29 @@ test("기체·인원을 선택해 예약 신청", async ({ page }) => {
   await page.getByRole("button", { name: "2026-11-10 예약 가능" }).click();
   await page.getByLabel("대여 기체").selectOption("B");
   await page.getByLabel("이용 인원").selectOption("2");
-  await page.getByRole("checkbox").check();
+  await expect(
+    page.getByRole("button", { name: "예약 신청", exact: true }),
+  ).toBeDisabled();
+  await page.locator(".booking-agreements > summary").click();
+  await expect(
+    page.getByText("예약 날짜는 2026-11-10이며", { exact: false }),
+  ).toBeVisible();
+  await page.getByRole("checkbox").first().check();
+  await expect(
+    page.getByRole("button", { name: "예약 신청", exact: true }),
+  ).toBeDisabled();
+  for (const checkbox of await page.getByRole("checkbox").all())
+    await checkbox.check();
+  await expect(
+    page.getByRole("button", { name: "예약 신청", exact: true }),
+  ).toBeEnabled();
+  await page.getByLabel("이용 인원").selectOption("1");
+  await expect(
+    page.getByRole("button", { name: "예약 신청", exact: true }),
+  ).toBeDisabled();
+  await page.getByLabel("이용 인원").selectOption("2");
+  for (const checkbox of await page.getByRole("checkbox").all())
+    await checkbox.check();
   await page.getByRole("button", { name: "예약 신청", exact: true }).click();
   await expect(page.getByRole("dialog")).not.toBeVisible();
   expect(commands[0]).toMatchObject({
@@ -81,6 +103,21 @@ test("기체·인원을 선택해 예약 신청", async ({ page }) => {
     people: 2,
   });
   await expect(page.getByRole("button", { name: /기기 예약/ })).toBeDisabled();
+});
+test("예약 내역은 바로 표시하고 더보기로 나머지를 표시", async ({ page }) => {
+  const state = initial();
+  state.bookings = Array.from({ length: 7 }, (_, index) => ({
+    ...booking,
+    id: `history-${index}`,
+    rental_date: `2026-11-0${4 - (index % 4)}`,
+    status: "cancelled",
+  }));
+  await mock(page, state);
+  await expect(page.locator(".history .booking-card")).toHaveCount(5);
+  await expect(page.locator(".history .booking-card").first()).toBeVisible();
+  await page.getByRole("button", { name: "더 보기 (2건)" }).click();
+  await expect(page.locator(".history .booking-card")).toHaveCount(7);
+  await expect(page.getByRole("button", { name: /더 보기/ })).toHaveCount(0);
 });
 test("4일 전 마이페이지에서 탈퇴 차단", async ({ page }) => {
   const state = initial();

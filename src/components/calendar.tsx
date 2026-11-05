@@ -24,21 +24,47 @@ export default function Calendar({
     <section className="calendar" aria-label="예약 캘린더">
       <div className="calendar-title">
         <button
+          type="button"
           aria-label="이전 달"
           disabled={offset <= -1}
           onClick={() => setOffset(offset - 1)}
         >
-          ‹
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="m14 6-6 6 6 6" />
+          </svg>
         </button>
         <h2 key={start}>
           {first.getUTCFullYear()}년 {first.getUTCMonth() + 1}월
         </h2>
         <button
+          type="button"
           aria-label="다음 달"
           disabled={offset >= 2}
           onClick={() => setOffset(offset + 1)}
         >
-          ›
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="m10 6 6 6-6 6" />
+          </svg>
         </button>
       </div>
       <div className="weekdays">

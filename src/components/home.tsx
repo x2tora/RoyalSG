@@ -20,6 +20,7 @@ import {
 import { MaterialLoader, Md } from "./material";
 import Theme from "./theme";
 import Calendar from "./calendar";
+import BookingForm from "./booking-form";
 type State = {
   configured: boolean;
   user: null | {
@@ -85,7 +86,7 @@ function Modal({
 }
 function Guide() {
   return (
-    <details className="guide">
+    <details className="guide" open>
       <summary>
         이용 전 꼭 확인해 주세요 <span>＋</span>
       </summary>
@@ -116,6 +117,7 @@ export default function Home() {
     [busy, setBusy] = useState(false),
     [intro, setIntro] = useState("loading"),
     [selected, setSelected] = useState<string | null>(null),
+    [historyCount, setHistoryCount] = useState(5),
     [deleting, setDeleting] = useState(false),
     [deleteConfirm, setDeleteConfirm] = useState(false),
     [deletePhone, setDeletePhone] = useState(""),
@@ -421,16 +423,24 @@ export default function Home() {
                       1:1 문의
                     </a>
                   </div>
-                  <details className="history">
-                    <summary>나의 예약 내역</summary>
+                  <section className="history" aria-label="나의 예약 내역">
+                    <h2>나의 예약 내역</h2>
                     {data?.bookings?.length ? (
-                      data.bookings.map((b) => (
-                        <BookingCard key={b.id} booking={b} />
-                      ))
+                      data.bookings
+                        .slice(0, historyCount)
+                        .map((b) => <BookingCard key={b.id} booking={b} />)
                     ) : (
                       <p>아직 예약 내역이 없습니다.</p>
                     )}
-                  </details>
+                    {data?.bookings && data.bookings.length > historyCount ? (
+                      <Md
+                        kind="text-button"
+                        onClick={() => setHistoryCount(historyCount + 5)}
+                      >
+                        더 보기 ({data.bookings.length - historyCount}건)
+                      </Md>
+                    ) : null}
+                  </section>
                 </>
               ) : (
                 <>
@@ -514,62 +524,17 @@ export default function Home() {
           title="기기 대여 신청"
           onClose={() => !busy && setSelected(null)}
         >
-          <p className="date-display">{selected}</p>
-          <p className="caption">
-            실제 이용: {addDays(selected, 1)} 00:00~05:00
-          </p>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              const values = new FormData(e.currentTarget);
-              void run(
-                "book",
-                {
-                  date: selected,
-                  machine: values.get("machine"),
-                  people: Number(values.get("people")),
-                },
-                () => {
-                  setSelected(null);
-                  navigate("home");
-                },
-              );
-            }}
-          >
-            <label>
-              대여 기체
-              <select name="machine" defaultValue="A">
-                {["A", "B", "C"].map((m) => (
-                  <option key={m} value={m}>
-                    {m} 기체
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              이용 인원
-              <select name="people" defaultValue="1">
-                <option value="1">1인 · 25,000원</option>
-                <option value="2">2인 · 35,000원</option>
-              </select>
-            </label>
-            <p className="notice">
-              관리자 승인 후 예약이 확정됩니다. 승인 대기 중에도 다른 예약은
-              신청할 수 없습니다.
-            </p>
-            <label className="check">
-              <input type="checkbox" required />
-              <span>이용일·가격·취소 및 탈퇴 제한을 확인했습니다.</span>
-            </label>
-            {error ? (
-              <p role="alert" className="error">
-                {error}
-              </p>
-            ) : null}
-            <Md type="submit" disabled={busy}>
-              예약 신청
-            </Md>
-          </form>
+          <BookingForm
+            date={selected}
+            busy={busy}
+            error={error}
+            onSubmit={(machine, people) =>
+              void run("book", { date: selected, machine, people }, () => {
+                setSelected(null);
+                navigate("home");
+              })
+            }
+          />
         </Modal>
       ) : null}
       {deleting ? (
