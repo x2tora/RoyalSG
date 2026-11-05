@@ -76,6 +76,57 @@ afterAll(async () => {
   await db?.close();
 });
 describe("실제 마이그레이션 PostgreSQL 동작", () => {
+  it("가입 미완료 계정 취소 시 본인 계정과 모든 세션을 삭제", async () => {
+    await db.exec(
+      `reset role; delete from public.profiles where id='${a}'; set role authenticated;`,
+    );
+    await db.exec("select public.cancel_signup();reset role;");
+    expect(
+      (
+        await scalar(
+          `select count(*)::integer as count from auth.users where id='${a}'`,
+        )
+      )?.count,
+    ).toBe(0);
+    expect(
+      (
+        await scalar(
+          `select count(*)::integer as count from auth.sessions where user_id='${a}'`,
+        )
+      )?.count,
+    ).toBe(0);
+    expect(
+      (
+        await scalar(
+          `select count(*)::integer as count from auth.identities where user_id='${a}'`,
+        )
+      )?.count,
+    ).toBe(0);
+    expect(
+      (await scalar("select count(*)::integer as count from auth.users"))
+        ?.count,
+    ).toBe(2);
+    await login(a);
+    await expect(
+      db.exec(
+        "select public.save_profile('테스트','010-1234-5678',true,'2026-11-05')",
+      ),
+    ).rejects.toThrow("로그인이 필요");
+  });
+  it("기존 회원은 가입 취소로 탈퇴 제한을 우회할 수 없다", async () => {
+    await db.exec("select public.create_booking('2026-11-08','A',1)");
+    await expect(db.exec("select public.cancel_signup()")).rejects.toThrow(
+      "이미 가입이 완료",
+    );
+    expect(
+      (await scalar("select count(*)::integer as count from public.profiles"))
+        ?.count,
+    ).toBe(1);
+    expect(
+      (await scalar("select count(*)::integer as count from public.bookings"))
+        ?.count,
+    ).toBe(1);
+  });
   it("Google 이외의 계정과 폐기된 세션 요청을 차단", async () => {
     await db.exec(
       `reset role; delete from auth.identities where user_id='${a}'; set role authenticated;`,

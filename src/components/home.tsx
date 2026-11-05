@@ -119,6 +119,7 @@ export default function Home() {
     [selected, setSelected] = useState<string | null>(null),
     [historyCount, setHistoryCount] = useState(5),
     [deleting, setDeleting] = useState(false),
+    [cancellingSignup, setCancellingSignup] = useState(false),
     [deleteConfirm, setDeleteConfirm] = useState(false),
     [deletePhone, setDeletePhone] = useState(""),
     [phone, setPhone] = useState(""),
@@ -337,6 +338,19 @@ export default function Home() {
                 {signup ? "동의하고 시작하기" : "변경사항 저장"}
               </Md>
             </form>
+            {signup ? (
+              <Md
+                kind="text-button"
+                type="button"
+                disabled={busy}
+                onClick={() => {
+                  setError("");
+                  setCancellingSignup(true);
+                }}
+              >
+                가입 취소
+              </Md>
+            ) : null}
             {!signup ? (
               <div className="withdraw">
                 <p>
@@ -535,6 +549,47 @@ export default function Home() {
               })
             }
           />
+        </Modal>
+      ) : null}
+      {cancellingSignup ? (
+        <Modal
+          title="가입을 취소하시겠습니까?"
+          onClose={() => !busy && setCancellingSignup(false)}
+        >
+          <p>
+            입력한 내용은 저장되지 않습니다. 이 서비스의 가입 대기 계정과 로그인
+            세션을 삭제하고 비로그인 홈으로 돌아갑니다.
+          </p>
+          {error ? (
+            <p className="error" role="alert">
+              {error}
+            </p>
+          ) : null}
+          <div className="review-actions">
+            <Md
+              kind="outlined-button"
+              type="button"
+              disabled={busy}
+              onClick={() => setCancellingSignup(false)}
+            >
+              계속 가입하기
+            </Md>
+            <Md
+              type="button"
+              disabled={busy}
+              onClick={() =>
+                void run("cancelSignup", {}, () => {
+                  setCancellingSignup(false);
+                  setName("");
+                  setPhone("");
+                  setConsent(false);
+                  navigate("home");
+                })
+              }
+            >
+              가입 취소
+            </Md>
+          </div>
         </Modal>
       ) : null}
       {deleting ? (

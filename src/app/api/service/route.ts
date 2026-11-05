@@ -139,6 +139,7 @@ export async function POST(request: NextRequest) {
         },
       },
       delete: { name: "delete_account", args: { p_phone: body.phone } },
+      cancelSignup: { name: "cancel_signup", args: {} },
       review: {
         name: "review_booking",
         args: { p_id: body.id, p_status: body.status },
@@ -157,7 +158,8 @@ export async function POST(request: NextRequest) {
         "요청을 처리하지 못했습니다. 입력 내용과 예약 현황을 확인해 주세요.",
       );
     }
-    if (body.action === "delete") await db.auth.signOut({ scope: "local" });
+    if (body.action === "delete" || body.action === "cancelSignup")
+      await db.auth.signOut({ scope: "local" });
     return NextResponse.json({ ok: true });
   } catch (error) {
     return NextResponse.json(

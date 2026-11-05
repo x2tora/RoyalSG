@@ -28,13 +28,19 @@ function initial(): Snapshot {
 }
 async function mock(page: Page, state: Snapshot) {
   const commands: Record<string, unknown>[] = [];
+  let cancelledSignup = false;
   await page.route("**/api/service", async (route) => {
     if (route.request().method() === "GET") {
-      await route.fulfill({ json: state });
+      await route.fulfill({
+        json: cancelledSignup
+          ? { ...state, user: null, bookings: [], admin: false }
+          : state,
+      });
       return;
     }
     const body = route.request().postDataJSON();
     commands.push(body);
+    if (body.action === "cancelSignup") cancelledSignup = true;
     if (body.action === "profile")
       state.user.profile = { name: body.name, phone: body.phone };
     if (body.action === "book") {
@@ -64,6 +70,51 @@ test("최초 가입 시 필수 입력 후 홈 이동", async ({ page }) => {
   await page.getByRole("button", { name: "동의하고 시작하기" }).click();
   await expect(page.getByRole("heading", { name: "플레이어님" })).toBeVisible();
   expect(commands[0]).toMatchObject({ action: "profile", consent: true });
+});
+test("가입 취소 확인·계속 가입 및 비로그인 홈 복귀", async ({ page }) => {
+  const state = initial();
+  state.user.profile = null;
+  const commands = await mock(page, state);
+  await page.getByLabel("이름 또는 닉네임").fill("작성 중");
+  await page.getByRole("button", { name: "가입 취소", exact: true }).click();
+  const dialog = page.getByRole("dialog");
+  await expect(
+    dialog.getByRole("heading", { name: "가입을 취소하시겠습니까?" }),
+  ).toBeVisible();
+  expect(commands).toHaveLength(0);
+  await dialog.getByRole("button", { name: "계속 가입하기" }).click();
+  await expect(dialog).not.toBeVisible();
+  await expect(page.getByLabel("이름 또는 닉네임")).toHaveValue("작성 중");
+  await page.getByRole("button", { name: "가입 취소", exact: true }).click();
+  await dialog.getByRole("button", { name: "가입 취소", exact: true }).click();
+  await expect(
+    page.getByRole("button", { name: "Google로 로그인" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "회원가입", exact: true }),
+  ).not.toBeVisible();
+  expect(commands).toEqual([{ action: "cancelSignup" }]);
+});
+test("가입 취소 실패 시 확인창과 입력 내용 유지", async ({ page }) => {
+  const state = initial();
+  state.user.profile = null;
+  await page.route("**/api/service", (route) =>
+    route.fulfill(
+      route.request().method() === "GET"
+        ? { json: state }
+        : { status: 400, json: { error: "가입 취소에 실패했습니다." } },
+    ),
+  );
+  await page.goto("/");
+  await page.getByLabel("이름 또는 닉네임").fill("작성 중");
+  await page.getByRole("button", { name: "가입 취소", exact: true }).click();
+  const dialog = page.getByRole("dialog");
+  await dialog.getByRole("button", { name: "가입 취소", exact: true }).click();
+  await expect(dialog.getByRole("alert")).toHaveText(
+    "가입 취소에 실패했습니다.",
+  );
+  await dialog.getByRole("button", { name: "계속 가입하기" }).click();
+  await expect(page.getByLabel("이름 또는 닉네임")).toHaveValue("작성 중");
 });
 test("기체·인원을 선택해 예약 신청", async ({ page }) => {
   const commands = await mock(page, initial());
