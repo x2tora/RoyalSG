@@ -80,38 +80,34 @@ export default function Calendar({
           const day = addDays(start, i),
             slot = slots.find((s) => s.rental_date === day),
             can = available(day, now) && !slot;
-          const label = slot
-            ? slot.status === "blocked"
-              ? "운영 제한"
-              : `${slot.machine}기체 ${slot.people}인 · ${slot.status === "pending" ? "대기" : "확정"}`
-            : can
-              ? "예약 가능"
-              : "예약 불가";
+          const state =
+            slot?.status === "pending"
+              ? "pending"
+              : slot?.status === "confirmed"
+                ? "confirmed"
+                : can
+                  ? "available"
+                  : "restricted";
+          const status = {
+            available: "예약 가능",
+            restricted: "예약 제한",
+            pending: "대기",
+            confirmed: "확정",
+          }[state];
+          const detail = slot?.machine
+            ? `${slot.machine} · ${slot.people}인`
+            : null;
           return (
             <button
               key={day}
-              className={`day ${slot ? "occupied" : ""} ${day === range.today ? "today" : ""}`}
+              className={`day ${state} ${day === range.today ? "today" : ""}`}
               disabled={readonly || !can}
-              aria-label={`${day} ${label}`}
+              aria-label={`${day} ${status}${detail ? ` ${detail}` : ""}`}
               onClick={() => onSelect(day)}
             >
               <span>{i + 1}</span>
-              {slot ? (
-                <small>
-                  {slot.status === "blocked" ? (
-                    "운영 제한"
-                  ) : (
-                    <>
-                      {slot.machine}기체
-                      <br />
-                      {slot.people}인{" "}
-                      <b>{slot.status === "pending" ? "대기" : "확정"}</b>
-                    </>
-                  )}
-                </small>
-              ) : (
-                <i aria-hidden="true">{can ? "●" : ""}</i>
-              )}
+              <span className="day-status">{status}</span>
+              {detail ? <span className="day-detail">{detail}</span> : null}
             </button>
           );
         })}

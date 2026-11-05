@@ -276,7 +276,7 @@ dialog,
 footer {
   text-align: center;
   padding: 36px 0 12px;
-  font-size: 10px;
+  font-size: 12px;
   color: var(--md-sys-color-on-surface-variant);
 }
 footer > a {
@@ -340,13 +340,13 @@ footer p span {
   font-size: 13px;
 }
 .booking-card small {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--md-sys-color-on-surface-variant);
 }
 .badge {
   white-space: nowrap;
   border-radius: 8px;
-  font-size: 10px;
+  font-size: 12px;
   padding: 4px 8px;
   background: var(--md-sys-color-primary-container);
   color: var(--md-sys-color-on-primary-container);
@@ -569,43 +569,80 @@ select option {
   font-size: 14px;
 }
 .day:disabled {
-  color: var(--md-sys-color-on-surface-variant);
-  opacity: 0.45;
+  opacity: 1;
 }
-.day:not(:disabled) {
+.day.available {
   background: var(--md-sys-color-primary-container);
   color: var(--md-sys-color-on-primary-container);
-}
-.day.occupied {
-  opacity: 1;
-  background: var(--md-sys-color-surface-container);
-}
-.day.today {
   border-color: var(--md-sys-color-primary);
 }
-.day small {
-  font-size: 11px;
-  margin-top: 4px;
+.day.restricted {
+  background: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-on-surface-variant);
 }
-.day b {
-  font-weight: 400;
-  font-size: 11px;
+.day.pending {
+  background: var(--md-sys-color-tertiary-container, #f0dbff);
+  color: var(--md-sys-color-on-tertiary-container, #291334);
+  border-style: dashed;
+  border-color: currentColor;
 }
-.day i {
-  font-style: normal;
-  font-size: 7px;
-  margin-top: 16px;
-  color: var(--md-sys-color-primary);
+.day.confirmed {
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+}
+.day.today {
+  outline: 2px solid var(--md-sys-color-primary);
+  outline-offset: 2px;
+}
+.day > span:first-child {
+  font-size: 16px;
+  font-weight: 600;
+}
+.day-status {
+  margin-top: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.day-detail {
+  margin-top: 3px;
+  font-size: 11px;
+  white-space: nowrap;
 }
 .legend {
   display: flex;
-  gap: 18px;
-  font-size: 10px;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  font-size: 12px;
   margin-top: 16px;
-  color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-surface);
 }
-.legend span + span {
-  color: var(--md-sys-color-on-surface-variant);
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.legend span::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  border: 1px solid var(--md-sys-color-outline);
+}
+.legend .available::before {
+  background: var(--md-sys-color-primary-container);
+  border-color: var(--md-sys-color-primary);
+}
+.legend .restricted::before {
+  background: var(--md-sys-color-surface-container);
+}
+.legend .pending::before {
+  background: var(--md-sys-color-tertiary-container, #f0dbff);
+  border-style: dashed;
+}
+.legend .confirmed::before {
+  background: var(--md-sys-color-primary);
+  border-color: var(--md-sys-color-primary);
 }
 dialog {
   color: var(--md-sys-color-on-surface);
