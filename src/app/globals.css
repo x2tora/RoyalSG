@@ -731,7 +731,9 @@ dialog[open] {
   }
 }
 .intro-loading .brand {
-  opacity: 0;
+  transform: translateY(
+    max(0px, calc(50svh - 72px - env(safe-area-inset-top) - 50%))
+  );
 }
 .intro-loading .content,
 .intro-loading .topbar {
@@ -747,10 +749,12 @@ dialog[open] {
 @keyframes brand-enter {
   0%,
   20% {
-    opacity: 0;
+    transform: translateY(
+      max(0px, calc(50svh - 72px - env(safe-area-inset-top) - 50%))
+    );
   }
   100% {
-    opacity: 1;
+    transform: translateY(0);
   }
 }
 @keyframes content-enter {
