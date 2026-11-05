@@ -94,7 +94,10 @@ export default function BookingForm({
               const list =
                 details.querySelector<HTMLElement>(".agreement-list")!;
               const opening = !details.open;
-              if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+              if (
+                matchMedia("(prefers-reduced-motion: reduce)").matches ||
+                document.documentElement.dataset.lowVision === "true"
+              ) {
                 details.open = opening;
                 return;
               }

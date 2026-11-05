@@ -18,6 +18,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const panes = {
     "/": "home",
+    "/accessible": "home",
     "/signup": "signup",
     "/mypage": "profile",
     "/calendar": "calendar",

@@ -1178,3 +1178,110 @@ dialog[data-closing="true"]::backdrop {
 .intro-done .content > footer {
   animation: none;
 }
+
+.low-vision-label {
+  display: none;
+}
+:root[data-low-vision="true"] {
+  font-size: 20px;
+}
+:root[data-low-vision="true"] .low-vision-label {
+  display: block;
+  margin-right: auto;
+  font-size: 16px;
+  font-weight: 600;
+}
+:root[data-low-vision="true"] .shell {
+  max-width: 720px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+:root[data-low-vision="true"] body {
+  font-size: 20px;
+  line-height: 1.8;
+}
+:root[data-low-vision="true"] p,
+:root[data-low-vision="true"] li,
+:root[data-low-vision="true"] label,
+:root[data-low-vision="true"] small,
+:root[data-low-vision="true"] .caption,
+:root[data-low-vision="true"] .service-title,
+:root[data-low-vision="true"] .agreement-item strong,
+:root[data-low-vision="true"] .agreement-description,
+:root[data-low-vision="true"] .legend-item strong,
+:root[data-low-vision="true"] .booking-times,
+:root[data-low-vision="true"] footer {
+  font-size: 18px;
+  line-height: 1.8;
+}
+:root[data-low-vision="true"] md-filled-button,
+:root[data-low-vision="true"] md-outlined-button,
+:root[data-low-vision="true"] md-text-button {
+  --md-filled-button-container-height: 56px;
+  --md-outlined-button-container-height: 56px;
+  --md-text-button-container-height: 56px;
+  --md-filled-button-label-text-size: 18px;
+  --md-outlined-button-label-text-size: 18px;
+  --md-text-button-label-text-size: 18px;
+}
+:root[data-low-vision="true"] md-outlined-text-field {
+  --md-outlined-text-field-input-text-size: 20px;
+  --md-outlined-text-field-label-text-size: 18px;
+}
+:root[data-low-vision="true"] md-outlined-select {
+  --md-outlined-select-text-field-input-text-size: 20px;
+  --md-outlined-select-text-field-label-text-size: 18px;
+}
+:root[data-low-vision="true"] .day {
+  min-height: 116px;
+  border-width: 2px;
+}
+:root[data-low-vision="true"] .day > span:first-of-type {
+  font-size: 22px;
+}
+:root[data-low-vision="true"] .day-status,
+:root[data-low-vision="true"] .day-detail {
+  font-size: 14px;
+  white-space: normal;
+}
+:root[data-low-vision="true"] .weekdays {
+  font-size: 18px;
+}
+:root[data-low-vision="true"] .badge {
+  font-size: 16px;
+  white-space: normal;
+}
+:root[data-low-vision="true"] .google {
+  min-height: 56px;
+  font-size: 18px;
+}
+:root[data-low-vision="true"] .legend {
+  grid-template-columns: 1fr;
+}
+:root[data-low-vision="true"] dialog {
+  max-width: 600px;
+}
+:root[data-low-vision="true"] .booking-times dt {
+  flex-basis: 72px;
+}
+:root[data-low-vision="true"] {
+  --md-sys-color-on-surface: #161018 !important;
+  --md-sys-color-on-surface-variant: #302735 !important;
+  --md-sys-color-outline: #63546d !important;
+}
+:root[data-low-vision="true"][data-theme="dark"] {
+  --md-sys-color-on-surface: #fff !important;
+  --md-sys-color-on-surface-variant: #f0e4f8 !important;
+  --md-sys-color-outline: #c9b7d6 !important;
+}
+:root[data-low-vision="true"] :focus-visible {
+  outline: 3px solid var(--md-sys-color-primary);
+  outline-offset: 4px;
+}
+:root[data-low-vision="true"] *,
+:root[data-low-vision="true"] *::before,
+:root[data-low-vision="true"] *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}

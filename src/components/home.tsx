@@ -25,6 +25,7 @@ import Modal from "./dialog";
 import InstallApp from "./install-app";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import LowVision from "./low-vision";
 type Pane = "home" | "signup" | "profile" | "book" | "calendar" | "admin";
 const pagePaths: Record<Pane, string> = {
   home: "/",
@@ -197,7 +198,9 @@ export default function Home({
         seen = !!sessionStorage.getItem("royalsg-intro");
       } catch {}
       const skip =
-        seen || matchMedia("(prefers-reduced-motion: reduce)").matches;
+        seen ||
+        matchMedia("(prefers-reduced-motion: reduce)").matches ||
+        document.documentElement.dataset.lowVision === "true";
       if (!skip) {
         const logo = document.querySelector<HTMLImageElement>(".brand .logo");
         await Promise.allSettled([document.fonts.ready, logo?.decode()]);
@@ -270,6 +273,8 @@ export default function Home({
     >
       <MaterialLoader />
       <header className="topbar">
+        <span className="low-vision-label">저시력자용 화면</span>
+        <LowVision />
         <Theme />
       </header>
       <div className="brand">

@@ -27,7 +27,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{document.documentElement.dataset.introSeen=sessionStorage.getItem("royalsg-intro")||matchMedia("(prefers-reduced-motion: reduce)").matches?"true":"false"}catch{document.documentElement.dataset.introSeen="false"}`,
+            __html: `try{const accessible=location.pathname==="/accessible"||localStorage.getItem("royalsg-low-vision")==="true";document.documentElement.dataset.lowVision=String(accessible);if(accessible)localStorage.setItem("royalsg-low-vision","true");document.documentElement.dataset.introSeen=accessible||sessionStorage.getItem("royalsg-intro")||matchMedia("(prefers-reduced-motion: reduce)").matches?"true":"false"}catch{document.documentElement.dataset.introSeen="false"}`,
           }}
         />
       </head>

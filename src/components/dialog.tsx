@@ -17,7 +17,10 @@ export default function Modal({
     const dialog = ref.current;
     if (!dialog || closing.current) return;
     closing.current = true;
-    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (
+      !matchMedia("(prefers-reduced-motion: reduce)").matches &&
+      document.documentElement.dataset.lowVision !== "true"
+    ) {
       dialog.dataset.closing = "true";
       const animation = dialog.animate([{ opacity: 1 }, { opacity: 0 }], {
         duration: 160,
