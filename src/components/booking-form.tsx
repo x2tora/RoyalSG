@@ -99,20 +99,37 @@ export default function BookingForm({
                 return;
               }
               toggling.current = true;
+              const startHeight = details.getBoundingClientRect().height;
               if (opening) details.open = true;
+              const endHeight = opening
+                ? details.getBoundingClientRect().height
+                : event.currentTarget.getBoundingClientRect().height +
+                  details.offsetHeight -
+                  details.clientHeight;
+              details.style.overflow = "hidden";
+              const expansion = details.animate(
+                [{ height: `${startHeight}px` }, { height: `${endHeight}px` }],
+                {
+                  duration: 360,
+                  easing: "cubic-bezier(0.2, 0, 0, 1)",
+                  fill: "forwards",
+                },
+              );
               const animation = list.animate(
                 [{ opacity: opening ? 0 : 1 }, { opacity: opening ? 1 : 0 }],
                 {
-                  duration: opening ? 220 : 160,
+                  duration: opening ? 300 : 180,
                   easing: "ease",
                   fill: "forwards",
                 },
               );
               try {
-                await animation.finished;
+                await Promise.all([expansion.finished, animation.finished]);
               } catch {}
               if (!opening) details.open = false;
+              expansion.cancel();
               animation.cancel();
+              details.style.removeProperty("overflow");
               toggling.current = false;
             }}
           >
