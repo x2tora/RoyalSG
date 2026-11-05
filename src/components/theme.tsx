@@ -49,6 +49,7 @@ export default function Theme() {
         );
       }
       document.documentElement.style.colorScheme = dark ? "dark" : "light";
+      document.documentElement.dataset.theme = dark ? "dark" : "light";
     };
     update();
     try {

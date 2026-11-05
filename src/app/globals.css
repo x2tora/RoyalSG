@@ -607,24 +607,9 @@ select option {
 .day:disabled {
   opacity: 1;
 }
-.day.available {
-  background: var(--md-sys-color-primary-container);
-  color: var(--md-sys-color-on-primary-container);
-  border-color: var(--md-sys-color-primary);
-}
 .day.restricted {
   background: var(--md-sys-color-surface-container);
   color: var(--md-sys-color-on-surface-variant);
-}
-.day.pending {
-  background: var(--md-sys-color-tertiary-container, #f0dbff);
-  color: var(--md-sys-color-on-tertiary-container, #291334);
-  border-style: dashed;
-  border-color: currentColor;
-}
-.day.confirmed {
-  background: var(--md-sys-color-primary);
-  color: var(--md-sys-color-on-primary);
 }
 .day.today {
   outline: 2px solid var(--md-sys-color-primary);
@@ -676,34 +661,6 @@ select option {
   margin-top: 3px;
   border: 1px solid var(--md-sys-color-outline-variant);
   border-radius: 5px;
-}
-.day.available,
-.legend-item.available .legend-swatch {
-  background: color-mix(
-    in srgb,
-    var(--md-sys-color-primary-container) 45%,
-    var(--md-sys-color-surface)
-  );
-  border-color: var(--md-sys-color-outline-variant);
-}
-.day.pending,
-.legend-item.pending .legend-swatch {
-  background: color-mix(
-    in srgb,
-    var(--md-sys-color-tertiary-container, #f0dbff) 40%,
-    var(--md-sys-color-surface)
-  );
-  border: 1px dashed var(--md-sys-color-outline-variant);
-}
-.day.confirmed,
-.legend-item.confirmed .legend-swatch {
-  background: var(--md-sys-color-primary-container);
-  border-color: var(--md-sys-color-outline-variant);
-}
-.day.available,
-.day.pending,
-.day.confirmed {
-  color: var(--md-sys-color-on-surface);
 }
 .legend-item.restricted .legend-swatch {
   background: var(--md-sys-color-surface-container);
@@ -955,13 +912,43 @@ dialog {
   text-align: left;
 }
 
+:root {
+  --calendar-available-bg: #dcf0df;
+  --calendar-available-text: #225331;
+  --calendar-available-border: #9fc6a8;
+  --calendar-pending-bg: #eee3f7;
+  --calendar-pending-text: #5b4374;
+  --calendar-pending-border: #cbb5df;
+  --calendar-confirmed-bg: #68458a;
+  --calendar-confirmed-text: #ffffff;
+  --calendar-confirmed-border: #68458a;
+}
+:root[data-theme="dark"] {
+  --calendar-available-bg: #203d2a;
+  --calendar-available-text: #c0e8c8;
+  --calendar-available-border: #456d50;
+  --calendar-pending-bg: #3d314d;
+  --calendar-pending-text: #e3cff5;
+  --calendar-pending-border: #715c88;
+  --calendar-confirmed-bg: #76539a;
+  --calendar-confirmed-text: #ffffff;
+  --calendar-confirmed-border: #a787ca;
+}
 .day.available,
 .legend-item.available .legend-swatch {
-  background: light-dark(#e0f0eb, #203b35);
-  border-color: light-dark(#a4c8bb, #42675b);
+  background: var(--calendar-available-bg);
+  color: var(--calendar-available-text);
+  border-color: var(--calendar-available-border);
 }
 .day.pending,
 .legend-item.pending .legend-swatch {
-  background: light-dark(#fff0dc, #403323);
-  border-color: light-dark(#d5bb96, #796044);
+  background: var(--calendar-pending-bg);
+  color: var(--calendar-pending-text);
+  border: 1px dashed var(--calendar-pending-border);
+}
+.day.confirmed,
+.legend-item.confirmed .legend-swatch {
+  background: var(--calendar-confirmed-bg);
+  color: var(--calendar-confirmed-text);
+  border-color: var(--calendar-confirmed-border);
 }
