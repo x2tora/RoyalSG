@@ -140,6 +140,10 @@ export async function POST(request: NextRequest) {
       },
       delete: { name: "delete_account", args: { p_phone: body.phone } },
       cancelSignup: { name: "cancel_signup", args: {} },
+      cancelBooking: {
+        name: "cancel_pending_booking",
+        args: { p_id: body.id },
+      },
       review: {
         name: "review_booking",
         args: { p_id: body.id, p_status: body.status },

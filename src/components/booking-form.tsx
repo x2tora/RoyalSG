@@ -34,7 +34,7 @@ export default function BookingForm({
     },
     {
       title: "취소 제한",
-      description: `예약 날짜 5일 전인 ${addDays(date, -5)}까지 카카오 1:1 문의로 취소를 요청할 수 있습니다. 서비스 내 직접 취소는 제공하지 않습니다.`,
+      description: `승인 대기 중에는 직접 취소할 수 있습니다. 확정 후에는 예약 날짜 5일 전인 ${addDays(date, -5)}까지 카카오 1:1 문의로 취소를 요청해 주세요.`,
     },
     {
       title: "회원탈퇴 제한",

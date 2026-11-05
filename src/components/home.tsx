@@ -63,8 +63,9 @@ function Guide() {
         <li>1인 25,000원 · 2인 35,000원 / 온라인 결제 없음</li>
         <li>대기·확정을 포함해 1인당 예약 1건만 보유할 수 있습니다.</li>
         <li>당일 예약 불가, 매일 21시에 14일 뒤 날짜를 공개합니다.</li>
+        <li>승인 대기 예약은 직접 취소할 수 있습니다.</li>
         <li>
-          취소는 예약일 5일 전까지{" "}
+          확정 예약의 취소는 예약일 5일 전까지{" "}
           <a href={CONTACT} target="_blank" rel="noreferrer">
             카카오 문의
           </a>
@@ -87,6 +88,7 @@ export default function Home() {
     [historyCount, setHistoryCount] = useState(5),
     [deleting, setDeleting] = useState(false),
     [cancellingSignup, setCancellingSignup] = useState(false),
+    [cancellingBooking, setCancellingBooking] = useState<Booking | null>(null),
     [deleteConfirm, setDeleteConfirm] = useState(false),
     [deletePhone, setDeletePhone] = useState(""),
     [phone, setPhone] = useState(""),
@@ -383,6 +385,20 @@ export default function Home() {
                     ) : null}
                   </div>
                   {active ? <BookingCard booking={active} /> : null}
+                  {active?.status === "pending" ? (
+                    <Md
+                      className="pending-cancel"
+                      kind="text-button"
+                      type="button"
+                      disabled={busy}
+                      onClick={() => {
+                        setError("");
+                        setCancellingBooking(active);
+                      }}
+                    >
+                      승인 대기 예약 취소
+                    </Md>
+                  ) : null}
                   <div className="actions">
                     <Md
                       disabled={busy || !!active}
@@ -518,6 +534,44 @@ export default function Home() {
               })
             }
           />
+        </Modal>
+      ) : null}
+      {cancellingBooking ? (
+        <Modal
+          title="예약을 취소하시겠습니까?"
+          onClose={() => !busy && setCancellingBooking(null)}
+        >
+          <p>
+            {cancellingBooking.rental_date} · {cancellingBooking.machine}기체 ·{" "}
+            {cancellingBooking.people}인 예약을 취소합니다. 취소 후 다른 날짜로
+            다시 신청할 수 있습니다.
+          </p>
+          {error ? (
+            <p role="alert" className="error">
+              {error}
+            </p>
+          ) : null}
+          <div className="dialog-actions">
+            <Md
+              kind="text-button"
+              type="button"
+              disabled={busy}
+              onClick={() => setCancellingBooking(null)}
+            >
+              유지하기
+            </Md>
+            <Md
+              type="button"
+              disabled={busy}
+              onClick={() =>
+                void run("cancelBooking", { id: cancellingBooking.id }, () =>
+                  setCancellingBooking(null),
+                )
+              }
+            >
+              예약 취소
+            </Md>
+          </div>
         </Modal>
       ) : null}
       {cancellingSignup ? (

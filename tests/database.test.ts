@@ -76,6 +76,49 @@ afterAll(async () => {
   await db?.close();
 });
 describe("실제 마이그레이션 PostgreSQL 동작", () => {
+  it("승인 대기는 5일 이내에도 취소하고 날짜·개인 한도를 해제", async () => {
+    const result = await scalar(
+      "select public.create_booking('2026-11-08','A',1) as id",
+    );
+    await db.query("select public.cancel_pending_booking($1)", [result?.id]);
+    expect(await scalar("select status,active from public.bookings")).toEqual({
+      status: "cancelled",
+      active: false,
+    });
+    await db.exec("select public.create_booking('2026-11-09','B',2)");
+    await login(b);
+    await db.exec("select public.create_booking('2026-11-08','C',1)");
+  });
+  it("타인 및 승인된 예약의 직접 취소를 차단", async () => {
+    const result = await scalar(
+      "select public.create_booking('2026-11-08','A',1) as id",
+    );
+    await login(b);
+    await expect(
+      db.query("select public.cancel_pending_booking($1)", [result?.id]),
+    ).rejects.toThrow("본인의 진행 중인 승인 대기");
+    await login(admin);
+    await db.query("select public.review_booking($1,'confirmed')", [
+      result?.id,
+    ]);
+    await login(a);
+    await expect(
+      db.query("select public.cancel_pending_booking($1)", [result?.id]),
+    ).rejects.toThrow("본인의 진행 중인 승인 대기");
+    expect((await scalar("select status from public.bookings"))?.status).toBe(
+      "confirmed",
+    );
+  });
+  it("사용자가 먼저 취소한 예약은 관리자 승인으로 되살릴 수 없다", async () => {
+    const result = await scalar(
+      "select public.create_booking('2026-11-08','A',1) as id",
+    );
+    await db.query("select public.cancel_pending_booking($1)", [result?.id]);
+    await login(admin);
+    await expect(
+      db.query("select public.review_booking($1,'confirmed')", [result?.id]),
+    ).rejects.toThrow("진행 중인 예약이 아닙니다");
+  });
   it("가입 미완료 계정 취소 시 본인 계정과 모든 세션을 삭제", async () => {
     await db.exec(
       `reset role; delete from public.profiles where id='${a}'; set role authenticated;`,

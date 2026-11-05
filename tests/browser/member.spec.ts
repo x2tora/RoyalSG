@@ -41,6 +41,10 @@ async function mock(page: Page, state: Snapshot) {
     const body = route.request().postDataJSON();
     commands.push(body);
     if (body.action === "cancelSignup") cancelledSignup = true;
+    if (body.action === "cancelBooking")
+      state.bookings = state.bookings.map((item) =>
+        item.id === body.id ? { ...item, status: "cancelled" } : item,
+      );
     if (body.action === "profile")
       state.user.profile = { name: body.name, phone: body.phone };
     if (body.action === "book") {
@@ -70,6 +74,39 @@ test("최초 가입 시 필수 입력 후 홈 이동", async ({ page }) => {
   await page.getByRole("button", { name: "동의하고 시작하기" }).click();
   await expect(page.getByRole("heading", { name: "플레이어님" })).toBeVisible();
   expect(commands[0]).toMatchObject({ action: "profile", consent: true });
+});
+test("승인 대기 예약은 확인 후 직접 취소 가능", async ({ page }) => {
+  const state = initial();
+  state.bookings = [booking];
+  state.now = "2026-11-06T00:00:00+09:00";
+  const commands = await mock(page, state);
+  await page
+    .getByRole("button", { name: "승인 대기 예약 취소", exact: true })
+    .click();
+  const dialog = page.getByRole("dialog");
+  await dialog.getByRole("button", { name: "유지하기" }).click();
+  expect(commands).toHaveLength(0);
+  await page
+    .getByRole("button", { name: "승인 대기 예약 취소", exact: true })
+    .click();
+  await dialog.getByRole("button", { name: "예약 취소", exact: true }).click();
+  await expect(dialog).not.toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "기기 예약", exact: true }),
+  ).toBeEnabled();
+  await expect(
+    page.getByRole("button", { name: "승인 대기 예약 취소", exact: true }),
+  ).toHaveCount(0);
+  expect(commands).toEqual([{ action: "cancelBooking", id: booking.id }]);
+});
+test("확정 예약에는 직접 취소 버튼을 표시하지 않는다", async ({ page }) => {
+  const state = initial();
+  state.bookings = [{ ...booking, status: "confirmed" }];
+  await mock(page, state);
+  await expect(page.getByRole("button", { name: "마이페이지" })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "승인 대기 예약 취소", exact: true }),
+  ).toHaveCount(0);
 });
 test("가입 취소 확인·계속 가입 및 비로그인 홈 복귀", async ({ page }) => {
   const state = initial();
