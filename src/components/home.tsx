@@ -20,7 +20,6 @@ import {
 import { MaterialLoader, Md } from "./material";
 import Theme from "./theme";
 import Calendar from "./calendar";
-import Link from "next/link";
 type State = {
   configured: boolean;
   user: null | {
@@ -223,9 +222,6 @@ export default function Home() {
     <main className={`shell intro-${intro}`}>
       <MaterialLoader />
       <header className="topbar">
-        <Link href="/" className="wordmark">
-          ROYAL SANGGU<span>AFTER HOURS</span>
-        </Link>
         <Theme />
       </header>
       <div className="brand">
@@ -236,7 +232,6 @@ export default function Home() {
           height="210"
           alt="로얄상구"
         />
-        <p className="eyebrow">YOUR PRIVATE ARCADE NIGHT</p>
         <h1>로얄상구</h1>
         <p className="service-title">로얄상구 기기 예약 서비스</p>
       </div>
@@ -266,8 +261,7 @@ export default function Home() {
           <section className="card">
             <div className="section-heading">
               <div>
-                <p className="eyebrow">{signup ? "WELCOME" : "MY PAGE"}</p>
-                <h2>{signup ? "처음 오셨군요" : "마이페이지"}</h2>
+                <h2>{signup ? "회원가입" : "마이페이지"}</h2>
               </div>
               {!signup ? (
                 <Md kind="text-button" onClick={() => navigate("home")}>
@@ -297,7 +291,6 @@ export default function Home() {
                   autoComplete="nickname"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="어떻게 불러드릴까요?"
                 />
               </label>
               <label>
@@ -376,7 +369,6 @@ export default function Home() {
                       </span>
                     )}
                     <h2>{user.profile?.name}님</h2>
-                    <p>오늘도 즐거운 플레이를 준비해 볼까요?</p>
                   </div>
                   <div className="account-actions">
                     <Md kind="text-button" onClick={() => navigate("profile")}>
@@ -403,7 +395,7 @@ export default function Home() {
                       disabled={busy || !!active}
                       onClick={() => navigate("book")}
                     >
-                      기기 예약 <span aria-hidden="true">↗</span>
+                      기기 예약
                     </Md>
                     <Md
                       kind="outlined-button"
@@ -417,7 +409,7 @@ export default function Home() {
                       target="_blank"
                       rel="noreferrer"
                     >
-                      1:1 문의 <span>↗</span>
+                      1:1 문의
                     </a>
                   </div>
                   <details className="history">
@@ -433,11 +425,6 @@ export default function Home() {
                 </>
               ) : (
                 <>
-                  <p className="welcome-copy">
-                    오롯이 플레이에 집중하는 시간.
-                    <br />
-                    <strong>나만의 오락실을 예약하세요.</strong>
-                  </p>
                   <div className="actions">
                     <button
                       className="google"
@@ -451,31 +438,12 @@ export default function Home() {
                       kind="outlined-button"
                       onClick={() => navigate("calendar")}
                     >
-                      예약 조회 <span aria-hidden="true">↗</span>
+                      예약 조회
                     </Md>
                   </div>
-                  <p className="caption">
-                    Google 계정으로 간편하게 시작하세요.
-                  </p>
                 </>
               )}
             </section>
-            <div className="night-card">
-              <span className="night-symbol" aria-hidden="true">
-                ✦
-              </span>
-              <div>
-                <p className="eyebrow">FIVE HOURS, ALL YOURS</p>
-                <h2>
-                  밤이 깊어질수록,
-                  <br />
-                  플레이는 자유롭게.
-                </h2>
-                <p>
-                  00:00 — 05:00 <span>FREE PLAY</span>
-                </p>
-              </div>
-            </div>
             <Guide />
           </>
         ) : null}
@@ -483,7 +451,6 @@ export default function Home() {
           <section>
             <div className="section-heading">
               <div>
-                <p className="eyebrow">ARCADE CALENDAR</p>
                 <h2>{pane === "book" ? "기기 예약" : "예약 조회"}</h2>
               </div>
               <Md kind="text-button" onClick={() => navigate("home")}>
@@ -648,7 +615,6 @@ function BookingCard({ booking: b }: { booking: Booking }) {
   return (
     <article className="booking-card">
       <div>
-        <p className="eyebrow">MY RESERVATION</p>
         <h3>{b.rental_date}</h3>
         <p>
           {b.machine}기체 · {b.people}인 · {b.price.toLocaleString()}원

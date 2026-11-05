@@ -4,9 +4,6 @@ export default function Privacy() {
   return (
     <main className="privacy">
       <Link href="/">← 홈으로</Link>
-      <p className="eyebrow" style={{ marginTop: 36 }}>
-        PRIVACY POLICY
-      </p>
       <h1>개인정보 처리방침</h1>
       <p>
         로얄상구(이하 “운영자”)는 기기 대여 예약 서비스 제공을 위해 아래와 같이

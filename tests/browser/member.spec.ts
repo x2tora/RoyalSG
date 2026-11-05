@@ -56,9 +56,7 @@ test("최초 가입 시 필수 입력 후 홈 이동", async ({ page }) => {
   const state = initial();
   state.user.profile = null;
   const commands = await mock(page, state);
-  await expect(
-    page.getByRole("heading", { name: "처음 오셨군요" }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "회원가입" })).toBeVisible();
   await page.getByLabel("이름 또는 닉네임").fill("플레이어");
   await page.getByLabel("연락처").fill("01012345678");
   await expect(page.getByLabel("연락처")).toHaveValue("010-1234-5678");
