@@ -101,7 +101,6 @@ export default function Home({
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false),
     [intro, setIntro] = useState("loading"),
-    [historyCount, setHistoryCount] = useState(5),
     [deleting, setDeleting] = useState(false),
     [cancellingSignup, setCancellingSignup] = useState(false),
     [cancellingBooking, setCancellingBooking] = useState<Booking | null>(null),
@@ -456,24 +455,6 @@ export default function Home({
                       1:1 문의
                     </a>
                   </div>
-                  <section className="history" aria-label="나의 예약 내역">
-                    <h2>나의 예약 내역</h2>
-                    {data?.bookings?.length ? (
-                      data.bookings
-                        .slice(0, historyCount)
-                        .map((b) => <BookingCard key={b.id} booking={b} />)
-                    ) : (
-                      <p>아직 예약 내역이 없습니다.</p>
-                    )}
-                    {data?.bookings && data.bookings.length > historyCount ? (
-                      <Md
-                        kind="text-button"
-                        onClick={() => setHistoryCount(historyCount + 5)}
-                      >
-                        더 보기 ({data.bookings.length - historyCount}건)
-                      </Md>
-                    ) : null}
-                  </section>
                 </>
               ) : (
                 <>
@@ -743,6 +724,14 @@ function Admin({
   const [review, setReview] = useState<{ id: string; status: string } | null>(
     null,
   );
+  const [showHistory, setShowHistory] = useState(false);
+  const bookings =
+    data?.bookings.filter((b) => {
+      const current =
+        ["pending", "confirmed"].includes(b.status) &&
+        endsAt(b.rental_date) > now;
+      return showHistory ? !current : current;
+    }) ?? [];
   return (
     <section>
       <div className="section-heading">
@@ -781,8 +770,12 @@ function Admin({
           </div>
         ))}
       </div>
-      {data?.bookings.length ? (
-        data.bookings.map((b) => (
+      <Md kind="outlined-button" onClick={() => setShowHistory(!showHistory)}>
+        {showHistory ? "현재 예약 보기" : "이전 내역 보기"}
+      </Md>
+      <h3>{showHistory ? "이전 예약 내역" : "현재 예약"}</h3>
+      {bookings.length ? (
+        bookings.map((b) => (
           <div className="card" key={b.id}>
             <BookingCard booking={b} />
             <p>

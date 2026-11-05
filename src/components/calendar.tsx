@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { addDays, available, dateKey, windowFor, type Slot } from "@/lib/rules";
 export default function Calendar({
   slots,
@@ -14,21 +14,34 @@ export default function Calendar({
 }) {
   const range = windowFor(now),
     [offset, setOffset] = useState(0);
-  const [direction, setDirection] = useState(0);
-  const gesture = useRef<{ x: number; y: number } | null>(null);
-  const suppressClick = useRef(false);
+  const viewport = useRef<HTMLDivElement>(null);
+  const currentOffset = useRef(offset);
+  useEffect(() => {
+    currentOffset.current = offset;
+  }, [offset]);
+  useEffect(() => {
+    const element = viewport.current;
+    if (!element) return;
+    const resize = new ResizeObserver(() => {
+      element.scrollLeft = element.clientWidth * (currentOffset.current + 1);
+    });
+    resize.observe(element);
+    return () => resize.disconnect();
+  }, []);
   function changeMonth(step: number) {
     const next = offset + step;
     if (next < -1 || next > 2) return;
-    setDirection(step);
-    setOffset(next);
+    const element = viewport.current;
+    element?.scrollTo({
+      left: element.clientWidth * (next + 1),
+      behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "instant"
+        : "smooth",
+    });
   }
   const first = new Date(range.today.slice(0, 7) + "-01T00:00:00Z");
   first.setUTCMonth(first.getUTCMonth() + offset);
-  const start = dateKey(first),
-    count = new Date(
-      Date.UTC(first.getUTCFullYear(), first.getUTCMonth() + 1, 0),
-    ).getUTCDate();
+  const start = dateKey(first);
   return (
     <section className="calendar" aria-label="예약 캘린더">
       <div className="calendar-title">
@@ -82,80 +95,76 @@ export default function Calendar({
         ))}
       </div>
       <div
-        key={start}
-        className={`calendar-grid month-${direction > 0 ? "next" : direction < 0 ? "previous" : "initial"}`}
-        onPointerDown={(event) => {
-          if (!event.isPrimary || event.button !== 0) return;
-          suppressClick.current = false;
-          gesture.current = { x: event.clientX, y: event.clientY };
-        }}
-        onPointerMove={(event) => {
-          const from = gesture.current;
-          if (!from) return;
-          const dx = event.clientX - from.x;
-          const dy = event.clientY - from.y;
-          if (Math.abs(dx) > 15 && Math.abs(dx) > Math.abs(dy) * 1.5) {
-            suppressClick.current = true;
-            event.currentTarget.setPointerCapture(event.pointerId);
-          }
-        }}
-        onPointerUp={(event) => {
-          const from = gesture.current;
-          gesture.current = null;
-          if (!from) return;
-          const dx = event.clientX - from.x;
-          if (
-            Math.abs(dx) >= 48 &&
-            Math.abs(dx) > Math.abs(event.clientY - from.y) * 1.5
-          )
-            changeMonth(dx < 0 ? 1 : -1);
-        }}
-        onPointerCancel={() => {
-          gesture.current = null;
-        }}
-        onClickCapture={(event) => {
-          if (suppressClick.current) {
-            event.preventDefault();
-            event.stopPropagation();
-          }
+        className="calendar-months"
+        ref={viewport}
+        onScroll={(event) => {
+          const element = event.currentTarget;
+          setOffset(
+            Math.max(
+              -1,
+              Math.min(
+                2,
+                Math.round(element.scrollLeft / element.clientWidth) - 1,
+              ),
+            ),
+          );
         }}
       >
-        {Array.from({ length: first.getUTCDay() }, (_, i) => (
-          <span key={"empty" + i} />
-        ))}
-        {Array.from({ length: count }, (_, i) => {
-          const day = addDays(start, i),
-            slot = slots.find((s) => s.rental_date === day),
-            can = available(day, now) && !slot;
-          const state =
-            slot?.status === "pending"
-              ? "pending"
-              : slot?.status === "confirmed"
-                ? "confirmed"
-                : can
-                  ? "available"
-                  : "restricted";
-          const status = {
-            available: "예약 가능",
-            restricted: "예약 제한",
-            pending: "대기",
-            confirmed: "확정",
-          }[state];
-          const detail = slot?.machine
-            ? `${slot.machine} 기체 · ${slot.people}인`
-            : null;
+        {[-1, 0, 1, 2].map((monthOffset) => {
+          const month = new Date(range.today.slice(0, 7) + "-01T00:00:00Z");
+          month.setUTCMonth(month.getUTCMonth() + monthOffset);
+          const monthStart = dateKey(month);
+          const count = new Date(
+            Date.UTC(month.getUTCFullYear(), month.getUTCMonth() + 1, 0),
+          ).getUTCDate();
           return (
-            <button
-              key={day}
-              className={`day ${state} ${day === range.today ? "today" : ""}`}
-              disabled={readonly || !can}
-              aria-label={`${day} ${status}${detail ? ` ${detail}` : ""}`}
-              onClick={() => onSelect(day)}
+            <div
+              className="calendar-grid"
+              key={monthStart}
+              aria-hidden={offset !== monthOffset}
+              inert={offset !== monthOffset}
             >
-              <span>{i + 1}</span>
-              <span className="day-status">{status}</span>
-              {detail ? <span className="day-detail">{detail}</span> : null}
-            </button>
+              {Array.from({ length: month.getUTCDay() }, (_, i) => (
+                <span key={"empty" + i} />
+              ))}
+              {Array.from({ length: count }, (_, i) => {
+                const day = addDays(monthStart, i),
+                  slot = slots.find((s) => s.rental_date === day),
+                  can = available(day, now) && !slot;
+                const state =
+                  slot?.status === "pending"
+                    ? "pending"
+                    : slot?.status === "confirmed"
+                      ? "confirmed"
+                      : can
+                        ? "available"
+                        : "restricted";
+                const status = {
+                  available: "예약 가능",
+                  restricted: "예약 제한",
+                  pending: "대기",
+                  confirmed: "확정",
+                }[state];
+                const detail = slot?.machine
+                  ? `${slot.machine} 기체 · ${slot.people}인`
+                  : null;
+                return (
+                  <button
+                    key={day}
+                    className={`day ${state} ${day === range.today ? "today" : ""}`}
+                    disabled={readonly || !can}
+                    aria-label={`${day} ${status}${detail ? ` ${detail}` : ""}`}
+                    onClick={() => onSelect(day)}
+                  >
+                    <span>{i + 1}</span>
+                    <span className="day-status">{status}</span>
+                    {detail ? (
+                      <span className="day-detail">{detail}</span>
+                    ) : null}
+                  </button>
+                );
+              })}
+            </div>
           );
         })}
       </div>

@@ -210,37 +210,23 @@ dialog,
   height: 56px;
 }
 .calendar-grid {
-  touch-action: pan-y;
   user-select: none;
 }
-.calendar {
-  overflow: hidden;
+.calendar-months {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
 }
-.month-next {
-  animation: month-next 300ms ease-in both;
+.calendar-months::-webkit-scrollbar {
+  display: none;
 }
-.month-previous {
-  animation: month-previous 300ms ease-in both;
-}
-@keyframes month-next {
-  from {
-    opacity: 0;
-    transform: translateX(24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-@keyframes month-previous {
-  from {
-    opacity: 0;
-    transform: translateX(-24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+.calendar-months > .calendar-grid {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  align-content: start;
 }
 .logo {
   display: block;
@@ -967,4 +953,15 @@ footer {
 
 dialog {
   text-align: left;
+}
+
+.day.available,
+.legend-item.available .legend-swatch {
+  background: light-dark(#e0f0eb, #203b35);
+  border-color: light-dark(#a4c8bb, #42675b);
+}
+.day.pending,
+.legend-item.pending .legend-swatch {
+  background: light-dark(#fff0dc, #403323);
+  border-color: light-dark(#d5bb96, #796044);
 }
