@@ -52,6 +52,8 @@ npm run dev
 
 저장소: `xitora/RoyalSG`, Vercel: `x1t0ra/royalsg`.
 
+루트 레이아웃의 `@vercel/speed-insights/next`로 모든 페이지의 웹 성능을 측정합니다. 수집 결과는 Vercel 프로젝트의 Speed Insights에서 확인합니다.
+
 운영 환경변수: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `NEXT_PUBLIC_SITE_URL`.
 
 운영 브랜치는 `main`, 그 외 브랜치는 Preview로 배포합니다. Preview에 운영 DB 환경변수를 복사하지 않습니다. 개발 Supabase를 별도 구성하기 전 Preview는 연결 준비 상태로 표시합니다. 마이그레이션은 웹 배포에서 자동 실행하지 않습니다.
