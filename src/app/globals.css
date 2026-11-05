@@ -169,18 +169,24 @@ md-text-button:not(:defined) {
   inset: 0;
   width: 24px;
   height: 24px;
-  transition: opacity 450ms ease-in;
+  transition:
+    opacity 450ms ease-in,
+    transform 650ms ease;
 }
 .theme-sun {
+  transform: rotate(0deg);
   opacity: 1;
 }
 .theme-moon {
+  transform: rotate(-90deg);
   opacity: 0;
 }
 .theme-toggle[data-mode="dark"] .theme-sun {
+  transform: rotate(90deg);
   opacity: 0;
 }
 .theme-toggle[data-mode="dark"] .theme-moon {
+  transform: rotate(0deg);
   opacity: 1;
 }
 body,
@@ -302,21 +308,18 @@ dialog,
   line-height: 1.8;
 }
 .guide {
-  border-top: 1px solid var(--md-sys-color-outline-variant);
-  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  background: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-on-surface);
+  border-radius: 16px;
+  padding: 24px;
   margin-top: 24px;
   font-size: 13px;
 }
-.guide summary {
-  cursor: pointer;
-  list-style: none;
-  padding: 20px 2px;
-  display: flex;
-  justify-content: space-between;
-  font-weight: 500;
-}
-.guide summary span {
+.guide h2 {
   font-size: 18px;
+  line-height: 26px;
+  font-weight: 500;
+  margin-bottom: 16px;
 }
 .guide ul {
   padding-left: 20px;
@@ -464,13 +467,6 @@ footer p span {
   margin-top: 6px;
   font-size: 12px;
   color: var(--md-sys-color-on-surface-variant);
-}
-.guide[open] summary > span {
-  font-size: 0;
-}
-.guide[open] summary > span::after {
-  content: "−";
-  font-size: 18px;
 }
 .section-heading {
   display: flex;
@@ -785,7 +781,7 @@ dialog > p {
   animation-duration: 433.333ms;
   animation-delay: 1.2s;
 }
-.guide[open] ul,
+.guide ul,
 .booking-agreements[open] .agreement-list,
 .history .booking-card,
 .welcome > .booking-card,
@@ -1032,4 +1028,22 @@ md-outlined-icon-button:not(:defined) {
   .topbar {
     transition: none;
   }
+}
+
+.booking-times {
+  margin: 16px 0;
+  font-size: 12px;
+  color: var(--md-sys-color-on-surface-variant);
+}
+.booking-times > div {
+  display: flex;
+  gap: 16px;
+  margin-top: 6px;
+}
+.booking-times dt {
+  flex: 0 0 32px;
+}
+.booking-times dd {
+  margin: 0;
+  color: var(--md-sys-color-on-surface);
 }

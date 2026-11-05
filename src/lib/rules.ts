@@ -9,6 +9,10 @@ export type Booking = {
   people: number;
   price: number;
   status: "pending" | "confirmed" | "rejected" | "cancelled";
+  created_at?: string;
+  confirmed_at?: string | null;
+  cancelled_at?: string | null;
+  rejected_at?: string | null;
   user_id?: string;
   name?: string;
   phone?: string;

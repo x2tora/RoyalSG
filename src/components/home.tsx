@@ -79,10 +79,8 @@ async function command(action: string, args: Record<string, unknown> = {}) {
 }
 function Guide() {
   return (
-    <details className="guide" open>
-      <summary>
-        이용 전 꼭 확인해 주세요! <span>＋</span>
-      </summary>
+    <section className="guide" aria-labelledby="guide-title">
+      <h2 id="guide-title">이용 전 꼭 확인해 주세요!</h2>
       <ul>
         <li>운영: 일·월·화·수·목 다음날 00:00~05:00</li>
         <li>예: 10월 9일 예약 → 10월 10일 00:00~05:00 이용 가능</li>
@@ -102,7 +100,7 @@ function Guide() {
         <li>취소 불가능한 대여 내역 보유 시, 회원 탈퇴가 불가능합니다.</li>
         <li>시범 운영 중으로 세부 내용은 언제든 변경될 수 있습니다.</li>
       </ul>
-    </details>
+    </section>
   );
 }
 export default function Home({
@@ -504,7 +502,6 @@ export default function Home({
                 </>
               )}
             </section>
-            <Guide />
           </>
         ) : null}
         {!signup && (pane === "book" || pane === "calendar") ? (
@@ -809,6 +806,28 @@ function Admin({
               {b.name ?? "탈퇴/보유기간 종료"}{" "}
               {b.phone ? <a href={"tel:" + b.phone}>{b.phone}</a> : null}
             </p>
+            <dl className="booking-times">
+              {[
+                ["신청", b.created_at],
+                ["승인", b.confirmed_at],
+                ["취소", b.cancelled_at],
+                ["거절", b.rejected_at],
+              ].map(([label, value]) => (
+                <div key={label}>
+                  <dt>{label}</dt>
+                  <dd>
+                    {value
+                      ? new Intl.DateTimeFormat("ko-KR", {
+                          timeZone: "Asia/Seoul",
+                          dateStyle: "medium",
+                          timeStyle: "short",
+                          hour12: false,
+                        }).format(new Date(value))
+                      : "기록 없음"}
+                  </dd>
+                </div>
+              ))}
+            </dl>
             {["pending", "confirmed"].includes(b.status) &&
             endsAt(b.rental_date) > now ? (
               <div className="review-actions">
