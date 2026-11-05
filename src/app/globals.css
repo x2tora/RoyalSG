@@ -184,8 +184,63 @@ dialog,
     border-color 450ms ease-in;
 }
 .brand {
+  --intro-scale: 1;
   text-align: center;
   padding: 24px 0;
+}
+.compact-header .brand {
+  --intro-scale: 1.65;
+  padding: 8px 0 20px;
+  transform-origin: center;
+}
+.compact-header .logo {
+  width: 100px;
+  height: 100px;
+}
+.compact-header .brand h1 {
+  font-size: 24px;
+  line-height: 32px;
+  letter-spacing: -0.6px;
+}
+.compact-header .service-title {
+  font-size: 12px;
+  margin-top: 3px;
+}
+.compact-header .topbar {
+  height: 56px;
+}
+.calendar-grid {
+  touch-action: pan-y;
+  user-select: none;
+}
+.calendar {
+  overflow: hidden;
+}
+.month-next {
+  animation: month-next 300ms ease-in both;
+}
+.month-previous {
+  animation: month-previous 300ms ease-in both;
+}
+@keyframes month-next {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes month-previous {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 .logo {
   display: block;
@@ -798,8 +853,9 @@ dialog[open] {
 }
 .intro-loading .brand {
   transform: translateY(
-    max(0px, calc(50svh - 72px - env(safe-area-inset-top) - 50%))
-  );
+      max(0px, calc(50svh - 72px - env(safe-area-inset-top) - 50%))
+    )
+    scale(var(--intro-scale));
 }
 .intro-loading .content,
 .intro-loading .topbar {
@@ -816,11 +872,12 @@ dialog[open] {
   0%,
   20% {
     transform: translateY(
-      max(0px, calc(50svh - 72px - env(safe-area-inset-top) - 50%))
-    );
+        max(0px, calc(50svh - 72px - env(safe-area-inset-top) - 50%))
+      )
+      scale(var(--intro-scale));
   }
   100% {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 @keyframes content-enter {

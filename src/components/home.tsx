@@ -232,7 +232,9 @@ export default function Home({
     void run("profile", { name, phone, consent }, () => navigate("home", true));
   }
   return (
-    <main className={`shell intro-${intro}`}>
+    <main
+      className={`shell ${pane !== "home" ? "compact-header" : ""} intro-${intro}`}
+    >
       <MaterialLoader />
       <header className="topbar">
         <Theme />

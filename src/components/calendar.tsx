@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { addDays, available, dateKey, windowFor, type Slot } from "@/lib/rules";
 export default function Calendar({
   slots,
@@ -14,6 +14,15 @@ export default function Calendar({
 }) {
   const range = windowFor(now),
     [offset, setOffset] = useState(0);
+  const [direction, setDirection] = useState(0);
+  const gesture = useRef<{ x: number; y: number } | null>(null);
+  const suppressClick = useRef(false);
+  function changeMonth(step: number) {
+    const next = offset + step;
+    if (next < -1 || next > 2) return;
+    setDirection(step);
+    setOffset(next);
+  }
   const first = new Date(range.today.slice(0, 7) + "-01T00:00:00Z");
   first.setUTCMonth(first.getUTCMonth() + offset);
   const start = dateKey(first),
@@ -27,7 +36,7 @@ export default function Calendar({
           type="button"
           aria-label="이전 달"
           disabled={offset <= -1}
-          onClick={() => setOffset(offset - 1)}
+          onClick={() => changeMonth(-1)}
         >
           <svg
             width="22"
@@ -50,7 +59,7 @@ export default function Calendar({
           type="button"
           aria-label="다음 달"
           disabled={offset >= 2}
-          onClick={() => setOffset(offset + 1)}
+          onClick={() => changeMonth(1)}
         >
           <svg
             width="22"
@@ -72,7 +81,45 @@ export default function Calendar({
           <span key={d}>{d}</span>
         ))}
       </div>
-      <div className="calendar-grid">
+      <div
+        key={start}
+        className={`calendar-grid month-${direction > 0 ? "next" : direction < 0 ? "previous" : "initial"}`}
+        onPointerDown={(event) => {
+          if (!event.isPrimary || event.button !== 0) return;
+          suppressClick.current = false;
+          gesture.current = { x: event.clientX, y: event.clientY };
+        }}
+        onPointerMove={(event) => {
+          const from = gesture.current;
+          if (!from) return;
+          const dx = event.clientX - from.x;
+          const dy = event.clientY - from.y;
+          if (Math.abs(dx) > 15 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+            suppressClick.current = true;
+            event.currentTarget.setPointerCapture(event.pointerId);
+          }
+        }}
+        onPointerUp={(event) => {
+          const from = gesture.current;
+          gesture.current = null;
+          if (!from) return;
+          const dx = event.clientX - from.x;
+          if (
+            Math.abs(dx) >= 48 &&
+            Math.abs(dx) > Math.abs(event.clientY - from.y) * 1.5
+          )
+            changeMonth(dx < 0 ? 1 : -1);
+        }}
+        onPointerCancel={() => {
+          gesture.current = null;
+        }}
+        onClickCapture={(event) => {
+          if (suppressClick.current) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+        }}
+      >
         {Array.from({ length: first.getUTCDay() }, (_, i) => (
           <span key={"empty" + i} />
         ))}
