@@ -145,8 +145,10 @@ md-text-button:not(:defined) {
   background: transparent;
   color: var(--md-sys-color-on-surface);
 }
-.theme-toggle:hover {
-  background: var(--md-sys-color-surface-container);
+@media (hover: hover) and (pointer: fine) {
+  .theme-toggle:hover {
+    background: var(--md-sys-color-surface-container);
+  }
 }
 .theme-icons {
   position: relative;
@@ -572,9 +574,11 @@ select option {
     background-color 180ms ease-in,
     border-color 180ms ease-in;
 }
-.calendar-title md-outlined-icon-button:not(:disabled):hover {
-  background: var(--md-sys-color-primary-container);
-  border-color: var(--md-sys-color-primary);
+@media (hover: hover) and (pointer: fine) {
+  .calendar-title md-outlined-icon-button:not(:disabled):hover {
+    background: var(--md-sys-color-primary-container);
+    border-color: var(--md-sys-color-primary);
+  }
 }
 .calendar-title md-outlined-icon-button:disabled {
   opacity: 0.3;
