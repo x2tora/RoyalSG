@@ -40,7 +40,7 @@ npm run dev
 1. Google Cloud에서 웹 OAuth 클라이언트를 생성합니다.
 2. 승인된 리디렉션 URI: `https://ugmoisarxveuyuvhnhqi.supabase.co/auth/v1/callback`.
 3. Supabase Authentication → Providers → Google에 Client ID·Secret을 직접 저장합니다.
-4. Supabase URL Configuration의 Site URL은 `https://royalsg.vercel.app`, Redirect URLs는 `https://royalsg.vercel.app/auth/callback`으로 설정합니다. 개발은 `http://localhost:3000/auth/callback`을 추가합니다.
+4. Supabase URL Configuration의 Site URL은 `https://royalsg.xitora.cc`, Redirect URLs는 `https://royalsg.xitora.cc/auth/callback`으로 설정합니다. 개발은 `http://localhost:3000/auth/callback`을 추가합니다.
 5. Google 로그인이 비활성화되어 있으면 로그인 시작 시 설정 안내를 표시합니다.
 
 비밀키는 브라우저·GitHub에 저장하지 않습니다. 앱은 publishable key와 사용자 세션만 사용하며 service role 키가 필요하지 않습니다.
