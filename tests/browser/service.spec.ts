@@ -7,8 +7,7 @@ test("공개 홈, 테마 저장, 인트로 및 캘린더", async ({ page }) => {
     page.getByRole("button", { name: "Google로 로그인" }),
   ).toBeVisible();
   await expect(page.locator(".shell")).toHaveClass(/intro-play/);
-  await page.getByLabel("테마 설정").click();
-  await page.getByLabel("화면 모드").selectOption("dark");
+  await page.getByRole("button", { name: "다크 모드로 전환" }).click();
   await expect
     .poll(() => page.evaluate(() => document.documentElement.style.colorScheme))
     .toBe("dark");
@@ -60,38 +59,38 @@ test("개인정보 처리방침과 외부 링크", async ({ page }) => {
     page.getByRole("heading", { name: "개인정보 처리방침", exact: true }),
   ).toBeVisible();
 });
-test("시스템 명암 변경과 수동 테마를 표면 색상까지 반영", async ({ page }) => {
+test("초기 시스템 명암과 라이트·다크 전환 및 저장", async ({ page }) => {
   await page.emulateMedia({ colorScheme: "dark" });
   await page.goto("/");
-  await page.getByLabel("테마 설정").click();
-  await page.getByLabel("화면 모드").selectOption("light");
-  await expect
-    .poll(() =>
-      page.evaluate(() =>
-        getComputedStyle(document.documentElement)
-          .getPropertyValue("--md-sys-color-surface-container")
-          .trim(),
-      ),
-    )
-    .toMatch(/^#/);
-  const light = await page.evaluate(() =>
-    getComputedStyle(document.documentElement)
-      .getPropertyValue("--md-sys-color-surface-container")
-      .trim(),
+  await expect(
+    page.getByRole("button", { name: "라이트 모드로 전환" }),
+  ).toBeEnabled();
+  await expect(page.locator('input[type="color"], .theme-panel')).toHaveCount(
+    0,
   );
-  await page.getByLabel("화면 모드").selectOption("system");
+  await page.getByRole("button", { name: "라이트 모드로 전환" }).click();
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.style.colorScheme))
+    .toBe("light");
+  const light = await page.evaluate(() =>
+    getComputedStyle(document.documentElement).getPropertyValue(
+      "--md-sys-color-surface-container",
+    ),
+  );
+  await page.getByRole("button", { name: "다크 모드로 전환" }).click();
   await expect
     .poll(() => page.evaluate(() => document.documentElement.style.colorScheme))
     .toBe("dark");
   expect(
     await page.evaluate(() =>
-      getComputedStyle(document.documentElement)
-        .getPropertyValue("--md-sys-color-surface-container")
-        .trim(),
+      getComputedStyle(document.documentElement).getPropertyValue(
+        "--md-sys-color-surface-container",
+      ),
     ),
   ).not.toBe(light);
   await page.emulateMedia({ colorScheme: "light" });
+  await page.reload();
   await expect
     .poll(() => page.evaluate(() => document.documentElement.style.colorScheme))
-    .toBe("light");
+    .toBe("dark");
 });
