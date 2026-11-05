@@ -716,9 +716,9 @@ dialog::backdrop {
   border: 0;
   background: none;
   color: inherit;
-  width: 40px;
-  height: 40px;
-  font-size: 28px;
+  width: 48px;
+  height: 48px;
+  --md-icon-button-icon-size: 24px;
   flex-shrink: 0;
 }
 .date-display {
@@ -905,11 +905,6 @@ md-outlined-select {
   gap: 8px;
   margin-top: 24px;
 }
-.dialog-heading md-icon-button {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-}
 dialog > p {
   font-size: 14px;
   line-height: 20px;
@@ -1016,9 +1011,6 @@ md-outlined-icon-button:not(:defined) {
   border: 0;
   background: transparent;
   --md-outlined-icon-button-container-shape: 50%;
-}
-.dialog-heading md-icon-button {
-  font-size: 24px;
 }
 .review-actions {
   justify-content: flex-end;
