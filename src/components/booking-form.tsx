@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { addDays, CONTACT } from "@/lib/rules";
 import { Md, Select, Checkbox } from "./material";
 
@@ -16,6 +16,7 @@ export default function BookingForm({
 }) {
   const [machine, setMachine] = useState("A");
   const [people, setPeople] = useState(1);
+  const toggling = useRef(false);
   const [agreed, setAgreed] = useState<boolean[]>([
     false,
     false,
@@ -84,17 +85,47 @@ export default function BookingForm({
           ]}
         />
         <details className="booking-agreements">
-          <summary>
+          <summary
+            onClick={async (event) => {
+              event.preventDefault();
+              if (toggling.current) return;
+              const details = event.currentTarget
+                .parentElement as HTMLDetailsElement;
+              const list =
+                details.querySelector<HTMLElement>(".agreement-list")!;
+              const opening = !details.open;
+              if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+                details.open = opening;
+                return;
+              }
+              toggling.current = true;
+              if (opening) details.open = true;
+              const animation = list.animate(
+                [{ opacity: opening ? 0 : 1 }, { opacity: opening ? 1 : 0 }],
+                {
+                  duration: opening ? 220 : 160,
+                  easing: "ease",
+                  fill: "forwards",
+                },
+              );
+              try {
+                await animation.finished;
+              } catch {}
+              if (!opening) details.open = false;
+              animation.cancel();
+              toggling.current = false;
+            }}
+          >
             이용 안내 확인 및 동의{" "}
             <span>
               {agreed.filter(Boolean).length}/{items.length}
             </span>
           </summary>
-          <div className="agreement-list">
+          <div className="agreement-list" style={{ animation: "none" }}>
             {items.map((item, index) => (
               <label className="agreement-item" key={item.title}>
                 <Checkbox
-                  label={`${item.title} 동의 (필수)`}
+                  label={`${item.title} 동의`}
                   required
                   checked={agreed[index]}
                   disabled={busy}
@@ -107,7 +138,7 @@ export default function BookingForm({
                   }
                 />
                 <span>
-                  <strong>{item.title} 동의 (필수)</strong>
+                  <strong>{item.title} 동의</strong>
                   <span className="agreement-description">
                     {item.description.split("\n").map((paragraph) => (
                       <span key={paragraph}>{paragraph}</span>
