@@ -778,8 +778,7 @@ dialog > p {
 .intro-play .content > section,
 .intro-play .content > .guide,
 .intro-play .content > footer {
-  animation-duration: 433.333ms;
-  animation-delay: 1.2s;
+  animation: none;
 }
 .guide ul,
 .booking-agreements[open] .agreement-list,
@@ -1144,4 +1143,19 @@ dialog[data-closing="true"]::backdrop {
     animation: none !important;
     transition: none !important;
   }
+}
+
+.intro-loading .brand,
+.intro-play .brand {
+  will-change: transform;
+}
+.intro-play .content,
+.intro-play .topbar {
+  will-change: opacity;
+}
+
+.intro-done .content > section,
+.intro-done .content > .guide,
+.intro-done .content > footer {
+  animation: none;
 }
