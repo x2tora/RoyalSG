@@ -30,7 +30,7 @@ export default function Calendar({
         >
           ‹
         </button>
-        <h2>
+        <h2 key={start}>
           {first.getUTCFullYear()}년 {first.getUTCMonth() + 1}월
         </h2>
         <button

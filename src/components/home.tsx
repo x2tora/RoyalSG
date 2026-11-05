@@ -235,7 +235,16 @@ export default function Home() {
         <h1>로얄상구</h1>
         <p className="service-title">로얄상구 기기 예약 서비스</p>
       </div>
-      <div className="content">
+      <div
+        className="content"
+        onAnimationEnd={(event) => {
+          if (
+            event.target === event.currentTarget &&
+            event.animationName === "content-enter"
+          )
+            setIntro("done");
+        }}
+      >
         {error ? (
           <div className="notice error" role="alert">
             {error}
@@ -448,7 +457,7 @@ export default function Home() {
           </>
         ) : null}
         {!signup && (pane === "book" || pane === "calendar") ? (
-          <section>
+          <section key={pane}>
             <div className="section-heading">
               <div>
                 <h2>{pane === "book" ? "기기 예약" : "예약 조회"}</h2>

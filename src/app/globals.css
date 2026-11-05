@@ -631,6 +631,60 @@ dialog > p {
   padding: 10px;
   text-align: left;
 }
+.content > section,
+.content > .guide,
+.content > footer,
+.privacy {
+  animation: surface-enter 650ms cubic-bezier(0.2, 0.65, 0.3, 1) both;
+}
+.intro-play .content > section,
+.intro-play .content > .guide,
+.intro-play .content > footer {
+  animation-delay: 1.8s;
+}
+.guide[open] ul,
+.history[open] .booking-card,
+.welcome > .booking-card,
+.calendar-title h2 {
+  animation: surface-enter 600ms cubic-bezier(0.2, 0.65, 0.3, 1) both;
+}
+dialog[open] {
+  animation: dialog-enter 550ms cubic-bezier(0.2, 0.65, 0.3, 1) both;
+}
+@keyframes surface-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  65% {
+    opacity: 1;
+    transform: translateY(-4px);
+  }
+  83% {
+    transform: translateY(1.5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes dialog-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+  65% {
+    opacity: 1;
+    transform: translateY(-3px) scale(1.012);
+  }
+  83% {
+    transform: translateY(1px) scale(0.998);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
 /* The brand starts at the viewport center before hydration as well. */
 .intro-loading .brand {
   transform: translateY(max(0px, calc(50svh - 90px - 50%)));

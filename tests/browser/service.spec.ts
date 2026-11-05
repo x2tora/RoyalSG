@@ -6,7 +6,7 @@ test("공개 홈, 테마 저장, 인트로 및 캘린더", async ({ page }) => {
   await expect(
     page.getByRole("button", { name: "Google로 로그인" }),
   ).toBeVisible();
-  await expect(page.locator(".shell")).toHaveClass(/intro-play/);
+  await expect(page.locator(".shell")).toHaveClass(/intro-(play|done)/);
   await page.getByRole("button", { name: "다크 모드로 전환" }).click();
   await expect
     .poll(() => page.evaluate(() => document.documentElement.style.colorScheme))
