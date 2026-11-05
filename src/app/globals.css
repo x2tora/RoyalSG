@@ -52,6 +52,25 @@ img {
   -webkit-touch-callout: none;
   -webkit-user-drag: none;
 }
+p,
+li,
+.caption,
+.agreement-description {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
+}
+.agreement-description > span {
+  display: block;
+}
+.agreement-description > span + span {
+  margin-top: 8px;
+}
+.withdraw p,
+.notice,
+.error {
+  white-space: pre-line;
+}
 body {
   margin: 0;
   background: var(--md-sys-color-surface);

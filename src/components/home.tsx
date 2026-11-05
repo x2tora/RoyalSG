@@ -172,8 +172,8 @@ export default function Home({
         setClock(
           new Date(
             serverClock.current.time +
-            Date.now() -
-            serverClock.current.received,
+              Date.now() -
+              serverClock.current.received,
           ),
         );
     }, 1000);
@@ -195,7 +195,7 @@ export default function Home({
       let seen = false;
       try {
         seen = !!sessionStorage.getItem("royalsg-intro");
-      } catch { }
+      } catch {}
       const skip =
         seen || matchMedia("(prefers-reduced-motion: reduce)").matches;
       if (!skip) {
@@ -207,7 +207,7 @@ export default function Home({
         if (cancelled) return;
         try {
           sessionStorage.setItem("royalsg-intro", "1");
-        } catch { }
+        } catch {}
         setIntro(skip ? "done" : "play");
         if (new URLSearchParams(location.search).has("error"))
           setError("Google 로그인에 실패했습니다. 다시 시도해 주세요.");
@@ -316,7 +316,7 @@ export default function Home({
           <p className="notice">{data.message}</p>
         ) : null}
         {(signup && pane === "signup") ||
-          (pane === "profile" && user?.profile) ? (
+        (pane === "profile" && user?.profile) ? (
           <section className="card">
             <div className="section-heading">
               <div>
@@ -399,7 +399,7 @@ export default function Home({
               <div className="withdraw">
                 <p>
                   {restricted
-                    ? "이용일 5일 전이 지나 회원탈퇴가 제한됩니다. 예약 관련 사항은 운영자에게 문의해 주세요."
+                    ? "이용일 5일 전이 지나 회원탈퇴가 제한됩니다.\n예약 관련 사항은 운영자에게 문의해 주세요."
                     : "탈퇴하면 계정 정보가 삭제되고 진행 중인 예약은 자동 취소됩니다."}
                 </p>
                 <Md
@@ -531,11 +531,11 @@ export default function Home({
               </Md>
             </div>
             {selected &&
-              data &&
-              user?.profile &&
-              (active ||
-                !available(selected, now) ||
-                data.slots.some((slot) => slot.rental_date === selected)) ? (
+            data &&
+            user?.profile &&
+            (active ||
+              !available(selected, now) ||
+              data.slots.some((slot) => slot.rental_date === selected)) ? (
               <p className="notice" role="status">
                 {active
                   ? "진행 중인 예약이 있어 새로 신청할 수 없습니다."
@@ -587,11 +587,11 @@ export default function Home({
         </footer>
       </div>
       {selected &&
-        data &&
-        user?.profile &&
-        !active &&
-        available(selected, now) &&
-        !data.slots.some((slot) => slot.rental_date === selected) ? (
+      data &&
+      user?.profile &&
+      !active &&
+      available(selected, now) &&
+      !data.slots.some((slot) => slot.rental_date === selected) ? (
         <Modal title="기기 대여 신청" onClose={() => !busy && back()}>
           <BookingForm
             date={selected}
@@ -649,8 +649,9 @@ export default function Home({
           onClose={() => !busy && setCancellingSignup(false)}
         >
           <p>
-            입력한 내용은 저장되지 않습니다. 이 서비스의 가입 대기 계정과 로그인
-            세션을 삭제하고 비로그인 홈으로 돌아갑니다.
+            입력한 내용은 저장되지 않습니다.
+            <br />이 서비스의 가입 대기 계정과 로그인 세션을 삭제하고 비로그인
+            홈으로 돌아갑니다.
           </p>
           {error ? (
             <p className="error" role="alert">
@@ -689,7 +690,11 @@ export default function Home({
           title={deleteConfirm ? "정말 탈퇴하시겠습니까?" : "회원탈퇴"}
           onClose={() => !busy && setDeleting(false)}
         >
-          <p>개인정보는 삭제되고 진행 중인 예약은 자동 취소됩니다.</p>
+          <p>
+            개인정보는 삭제됩니다.
+            <br />
+            진행 중인 예약은 자동 취소됩니다.
+          </p>
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -843,18 +848,18 @@ function Admin({
                   <dd>
                     {value
                       ? new Intl.DateTimeFormat("ko-KR", {
-                        timeZone: "Asia/Seoul",
-                        dateStyle: "medium",
-                        timeStyle: "short",
-                        hour12: false,
-                      }).format(new Date(value))
+                          timeZone: "Asia/Seoul",
+                          dateStyle: "medium",
+                          timeStyle: "short",
+                          hour12: false,
+                        }).format(new Date(value))
                       : "기록 없음"}
                   </dd>
                 </div>
               ))}
             </dl>
             {["pending", "confirmed"].includes(b.status) &&
-              endsAt(b.rental_date) > now ? (
+            endsAt(b.rental_date) > now ? (
               <div className="review-actions">
                 {b.status === "pending" ? (
                   <>

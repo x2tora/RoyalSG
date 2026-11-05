@@ -26,24 +26,24 @@ export default function BookingForm({
   const items = [
     {
       title: "이용일 및 시간",
-      description: `예약 날짜는 ${date}이며, 실제 이용은 ${addDays(date, 1)} 00:00~05:00입니다. 예약 날짜에서 다음날로 넘어가는 자정에 시작합니다.`,
+      description: `예약 날짜는 ${date}이며, 실제 이용은 ${addDays(date, 1)} 00:00~05:00입니다.\n예약 날짜에서 다음날로 넘어가는 자정에 시작합니다.`,
     },
     {
       title: "기체·인원 및 가격",
-      description: `${machine}기체 · ${people}인 · ${(people === 1 ? 25000 : 35000).toLocaleString()}원입니다. 온라인 결제는 없으며, 결제 관련 사항은 운영자에게 문의해 주세요.`,
+      description: `${machine}기체 · ${people}인 · ${(people === 1 ? 25000 : 35000).toLocaleString()}원입니다.\n온라인 결제는 없으며, 결제 관련 사항은 운영자에게 문의해 주세요.`,
     },
     {
       title: "취소 제한",
-      description: `승인 대기 중에는 직접 취소할 수 있습니다. 확정 후에는 예약 날짜 5일 전인 ${addDays(date, -5)}까지 카카오 1:1 문의로 취소를 요청해 주세요.`,
+      description: `승인 대기 중에는 직접 취소할 수 있습니다.\n확정 후에는 예약 날짜 5일 전인 ${addDays(date, -5)}까지 카카오 1:1 문의로 취소를 요청해 주세요.`,
     },
     {
       title: "회원탈퇴 제한",
-      description: `${addDays(date, -4)}부터 실제 이용이 끝나는 ${addDays(date, 1)} 05:00 전까지 승인 대기·확정 예약이 있으면 탈퇴할 수 없습니다. 탈퇴 가능한 기간에 탈퇴하면 진행 예약은 자동 취소됩니다.`,
+      description: `${addDays(date, -4)}부터 실제 이용이 끝나는 ${addDays(date, 1)} 05:00 전까지 승인 대기·확정 예약이 있으면 탈퇴할 수 없습니다.\n탈퇴 가능한 기간에 탈퇴하면 진행 예약은 자동 취소됩니다.`,
     },
     {
       title: "예약 승인 및 운영 방식",
       description:
-        "관리자 승인 후 확정되며, 승인 대기 중에도 해당 날짜와 1인 1건 한도를 차지합니다. 하루 한 기체를 FREE PLAY로 운영합니다. 시범 운영 중으로 세부 내용이 변경될 수 있습니다.",
+        "관리자 승인 후 확정되며, 승인 대기 중에도 해당 날짜와 1인 1건 한도를 차지합니다.\n하루 한 기체를 FREE PLAY로 운영합니다.\n시범 운영 중으로 세부 내용이 변경될 수 있습니다.",
     },
   ];
   const allAgreed = agreed.every(Boolean);
@@ -108,7 +108,11 @@ export default function BookingForm({
                 />
                 <span>
                   <strong>{item.title} 동의 (필수)</strong>
-                  <span>{item.description}</span>
+                  <span className="agreement-description">
+                    {item.description.split("\n").map((paragraph) => (
+                      <span key={paragraph}>{paragraph}</span>
+                    ))}
+                  </span>
                 </span>
               </label>
             ))}
