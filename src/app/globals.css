@@ -42,6 +42,11 @@
 }
 * {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+::selection {
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
 }
 body {
   margin: 0;
