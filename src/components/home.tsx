@@ -175,6 +175,7 @@ export default function Home({
         seen = !!sessionStorage.getItem("royalsg-intro");
         sessionStorage.setItem("royalsg-intro", "1");
       } catch {}
+      document.documentElement.dataset.introSeen = "true";
       setIntro(
         seen || matchMedia("(prefers-reduced-motion: reduce)").matches
           ? "done"

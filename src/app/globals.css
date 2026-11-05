@@ -800,6 +800,9 @@ dialog[open] {
     )
     scale(var(--intro-scale));
 }
+:root[data-intro-seen="true"] .intro-loading .brand {
+  transform: none;
+}
 .intro-loading .content,
 .intro-loading .topbar {
   visibility: hidden;

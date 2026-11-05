@@ -20,6 +20,13 @@ export const viewport: Viewport = {
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{document.documentElement.dataset.introSeen=sessionStorage.getItem("royalsg-intro")||matchMedia("(prefers-reduced-motion: reduce)").matches?"true":"false"}catch{document.documentElement.dataset.introSeen="false"}`,
+          }}
+        />
+      </head>
       <body>
         {children}
         <SpeedInsights />
