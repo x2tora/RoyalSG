@@ -1,4 +1,5 @@
 "use client";
+import { Md } from "./material";
 import { useEffect, useState } from "react";
 import {
   applyTheme,
@@ -57,7 +58,8 @@ export default function Theme() {
     } catch {}
   }, [mode, ready]);
   return (
-    <button
+    <Md
+      kind="icon-button"
       className="theme-toggle"
       type="button"
       data-mode={mode}
@@ -89,6 +91,6 @@ export default function Theme() {
           <path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z" />
         </svg>
       </span>
-    </button>
+    </Md>
   );
 }

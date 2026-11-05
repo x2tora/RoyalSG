@@ -1,4 +1,5 @@
 "use client";
+import { Md } from "./material";
 import { useLayoutEffect, useId, useRef, type ReactNode } from "react";
 export default function Modal({
   title,
@@ -38,9 +39,14 @@ export default function Modal({
     >
       <div className="dialog-heading">
         <h2 id={titleId}>{title}</h2>
-        <button type="button" aria-label="닫기" onClick={onClose}>
+        <Md
+          kind="icon-button"
+          type="button"
+          aria-label="닫기"
+          onClick={onClose}
+        >
           ×
-        </button>
+        </Md>
       </div>
       {children}
     </dialog>

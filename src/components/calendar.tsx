@@ -1,4 +1,5 @@
 "use client";
+import { Md } from "./material";
 import { useEffect, useRef, useState } from "react";
 import { addDays, available, dateKey, windowFor, type Slot } from "@/lib/rules";
 export default function Calendar({
@@ -45,7 +46,8 @@ export default function Calendar({
   return (
     <section className="calendar" aria-label="예약 캘린더">
       <div className="calendar-title">
-        <button
+        <Md
+          kind="outlined-icon-button"
           type="button"
           aria-label="이전 달"
           disabled={offset <= -1}
@@ -64,11 +66,12 @@ export default function Calendar({
           >
             <path d="m14 6-6 6 6 6" />
           </svg>
-        </button>
+        </Md>
         <h2 key={start}>
           {first.getUTCFullYear()}년 {first.getUTCMonth() + 1}월
         </h2>
-        <button
+        <Md
+          kind="outlined-icon-button"
           type="button"
           aria-label="다음 달"
           disabled={offset >= 2}
@@ -87,7 +90,7 @@ export default function Calendar({
           >
             <path d="m10 6 6 6-6 6" />
           </svg>
-        </button>
+        </Md>
       </div>
       <div className="weekdays">
         {["일", "월", "화", "수", "목", "금", "토"].map((d) => (

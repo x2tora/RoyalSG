@@ -24,6 +24,7 @@ import BookingForm from "./booking-form";
 import Modal from "./dialog";
 import InstallApp from "./install-app";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 type Pane = "home" | "signup" | "profile" | "book" | "calendar" | "admin";
 const pagePaths: Record<Pane, string> = {
   home: "/",
@@ -153,8 +154,8 @@ export default function Home({
         setClock(
           new Date(
             serverClock.current.time +
-            Date.now() -
-            serverClock.current.received,
+              Date.now() -
+              serverClock.current.received,
           ),
         );
     }, 1000);
@@ -175,7 +176,7 @@ export default function Home({
       try {
         seen = !!sessionStorage.getItem("royalsg-intro");
         sessionStorage.setItem("royalsg-intro", "1");
-      } catch { }
+      } catch {}
       document.documentElement.dataset.introSeen = "true";
       setIntro(
         seen || matchMedia("(prefers-reduced-motion: reduce)").matches
@@ -241,15 +242,17 @@ export default function Home({
         <Theme />
       </header>
       <div className="brand">
-        <img
-          className="logo"
-          src="/logo.png"
-          width="210"
-          height="210"
-          alt="로얄상구"
-        />
-        <h1>로얄상구</h1>
-        <p className="service-title">로얄상구 기기 예약 서비스</p>
+        <Link href="/" className="brand-link" aria-label="로얄상구 홈으로">
+          <img
+            className="logo"
+            src="/logo.png"
+            width="210"
+            height="210"
+            alt="로얄상구"
+          />
+          <h1>로얄상구</h1>
+          <p className="service-title">로얄상구 기기 예약 서비스</p>
+        </Link>
       </div>
       <div
         className="content"
@@ -264,21 +267,22 @@ export default function Home({
         {error ? (
           <div className="notice error" role="alert">
             {error}
-            <button
+            <Md
+              kind="text-button"
               onClick={() => {
                 setError("");
                 void refresh();
               }}
             >
               다시 확인
-            </button>
+            </Md>
           </div>
         ) : null}
         {data && !data.configured ? (
           <p className="notice">{data.message}</p>
         ) : null}
         {(signup && pane === "signup") ||
-          (pane === "profile" && user?.profile) ? (
+        (pane === "profile" && user?.profile) ? (
           <section className="card">
             <div className="section-heading">
               <div>
@@ -493,11 +497,11 @@ export default function Home({
               </Md>
             </div>
             {selected &&
-              data &&
-              user?.profile &&
-              (active ||
-                !available(selected, now) ||
-                data.slots.some((slot) => slot.rental_date === selected)) ? (
+            data &&
+            user?.profile &&
+            (active ||
+              !available(selected, now) ||
+              data.slots.some((slot) => slot.rental_date === selected)) ? (
               <p className="notice" role="status">
                 {active
                   ? "진행 중인 예약이 있어 새로 신청할 수 없습니다."
@@ -549,11 +553,11 @@ export default function Home({
         </footer>
       </div>
       {selected &&
-        data &&
-        user?.profile &&
-        !active &&
-        available(selected, now) &&
-        !data.slots.some((slot) => slot.rental_date === selected) ? (
+      data &&
+      user?.profile &&
+      !active &&
+      available(selected, now) &&
+      !data.slots.some((slot) => slot.rental_date === selected) ? (
         <Modal title="기기 대여 신청" onClose={() => !busy && back()}>
           <BookingForm
             date={selected}
@@ -785,7 +789,7 @@ function Admin({
               {b.phone ? <a href={"tel:" + b.phone}>{b.phone}</a> : null}
             </p>
             {["pending", "confirmed"].includes(b.status) &&
-              endsAt(b.rental_date) > now ? (
+            endsAt(b.rental_date) > now ? (
               <div className="review-actions">
                 {b.status === "pending" ? (
                   <>
