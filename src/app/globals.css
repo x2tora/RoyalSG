@@ -504,11 +504,6 @@ select option {
   color: inherit;
   text-decoration: underline;
 }
-.loading {
-  text-align: center;
-  padding: 20px;
-  font-size: 13px;
-}
 .calendar {
   margin-bottom: 24px;
 }
@@ -610,39 +605,73 @@ select option {
   white-space: nowrap;
 }
 .legend {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 12px;
+  margin-top: 20px;
+  padding: 18px 14px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 16px;
+}
+.legend-item {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px 14px;
+  align-items: flex-start;
+  gap: 8px;
+}
+.legend-item strong {
   font-size: 12px;
-  margin-top: 16px;
+  font-weight: 600;
+}
+.legend-item p {
+  margin-top: 3px;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--md-sys-color-on-surface-variant);
+}
+.legend-swatch {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  margin-top: 3px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 5px;
+}
+.day.available,
+.legend-item.available .legend-swatch {
+  background: color-mix(
+    in srgb,
+    var(--md-sys-color-primary-container) 45%,
+    var(--md-sys-color-surface)
+  );
+  border-color: var(--md-sys-color-outline-variant);
+}
+.day.pending,
+.legend-item.pending .legend-swatch {
+  background: color-mix(
+    in srgb,
+    var(--md-sys-color-tertiary-container, #f0dbff) 40%,
+    var(--md-sys-color-surface)
+  );
+  border: 1px dashed var(--md-sys-color-outline-variant);
+}
+.day.confirmed,
+.legend-item.confirmed .legend-swatch {
+  background: var(--md-sys-color-primary-container);
+  border-color: var(--md-sys-color-outline-variant);
+}
+.day.available,
+.day.pending,
+.day.confirmed {
   color: var(--md-sys-color-on-surface);
 }
-.legend span {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-.legend span::before {
-  content: "";
-  width: 10px;
-  height: 10px;
-  border-radius: 3px;
-  border: 1px solid var(--md-sys-color-outline);
-}
-.legend .available::before {
-  background: var(--md-sys-color-primary-container);
-  border-color: var(--md-sys-color-primary);
-}
-.legend .restricted::before {
+.legend-item.restricted .legend-swatch {
   background: var(--md-sys-color-surface-container);
 }
-.legend .pending::before {
-  background: var(--md-sys-color-tertiary-container, #f0dbff);
-  border-style: dashed;
-}
-.legend .confirmed::before {
-  background: var(--md-sys-color-primary);
-  border-color: var(--md-sys-color-primary);
+.day-detail {
+  white-space: normal;
+  overflow-wrap: normal;
+  font-size: 10px;
+  line-height: 1.5;
 }
 dialog {
   color: var(--md-sys-color-on-surface);

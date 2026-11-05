@@ -95,7 +95,7 @@ export default function Calendar({
             confirmed: "확정",
           }[state];
           const detail = slot?.machine
-            ? `${slot.machine} · ${slot.people}인`
+            ? `${slot.machine} 기체 · ${slot.people}인`
             : null;
           return (
             <button
@@ -112,9 +112,21 @@ export default function Calendar({
           );
         })}
       </div>
-      <div className="legend">
-        <span>● 예약 가능</span>
-        <span>■ 신청·운영 제한</span>
+      <div className="legend" aria-label="캘린더 상태 안내">
+        {[
+          ["available", "예약 가능", "날짜를 선택해 신청"],
+          ["restricted", "예약 제한", "운영일·신청 범위 외 또는 차단"],
+          ["pending", "대기", "신청 접수 · 관리자 승인 전"],
+          ["confirmed", "확정", "관리자 승인 완료"],
+        ].map(([state, title, description]) => (
+          <div className={`legend-item ${state}`} key={state}>
+            <span className="legend-swatch" aria-hidden="true" />
+            <div>
+              <strong>{title}</strong>
+              <p>{description}</p>
+            </div>
+          </div>
+        ))}
       </div>
       <p className="caption">
         {readonly

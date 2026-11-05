@@ -169,6 +169,7 @@ export default function Home({
     };
   }, [refresh]);
   useEffect(() => {
+    if ((!data && !error) || intro !== "loading") return;
     const initial = requestAnimationFrame(() => {
       let seen = false;
       try {
@@ -184,7 +185,7 @@ export default function Home({
         setError("Google 로그인에 실패했습니다. 다시 시도해 주세요.");
     });
     return () => cancelAnimationFrame(initial);
-  }, []);
+  }, [data, error, intro]);
   async function run(
     action: string,
     args: Record<string, unknown> = {},
@@ -269,11 +270,6 @@ export default function Home({
               다시 확인
             </button>
           </div>
-        ) : null}
-        {!data && !error ? (
-          <p className="loading" role="status">
-            서비스를 불러오고 있어요…
-          </p>
         ) : null}
         {data && !data.configured ? (
           <p className="notice">{data.message}</p>
