@@ -1,8 +1,16 @@
 import Link from "next/link";
 import { CONTACT, POLICY_VERSION } from "@/lib/rules";
+import LowVision from "@/components/low-vision";
+import Theme from "@/components/theme";
+import { MaterialLoader } from "@/components/material";
 export default function Privacy() {
   return (
     <main className="privacy">
+      <MaterialLoader />
+      <header className="topbar">
+        <LowVision />
+        <Theme />
+      </header>
       <Link href="/">← 홈으로</Link>
       <h1>개인정보 처리방침</h1>
       <p>
@@ -10,37 +18,44 @@ export default function Privacy() {
         개인정보를 처리합니다. 시행일: {POLICY_VERSION}
       </p>
       <h2>1. 수집 항목과 목적</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>구분</th>
-            <th>항목</th>
-            <th>목적</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Google 로그인</td>
-            <td>Google 계정 식별자, 이메일, 프로필 사진, 인증·세션 정보</td>
-            <td>회원 식별, 로그인, 계정 보안</td>
-          </tr>
-          <tr>
-            <td>회원가입</td>
-            <td>이름 또는 닉네임, 연락처, 방침 동의 시각·버전</td>
-            <td>예약자 확인, 예약 관련 연락, 동의 기록</td>
-          </tr>
-          <tr>
-            <td>예약</td>
-            <td>예약 날짜, 기체, 인원, 요금, 신청·처리 상태</td>
-            <td>예약 접수·승인, 일정 관리 및 문의 처리</td>
-          </tr>
-          <tr>
-            <td>서비스 이용</td>
-            <td>접속 IP, 요청·오류·보안 로그</td>
-            <td>장애 대응, 부정 이용 방지</td>
-          </tr>
-        </tbody>
-      </table>
+      <div
+        className="privacy-table"
+        role="region"
+        aria-label="수집 항목과 목적 표, 좌우로 스크롤 가능"
+        tabIndex={0}
+      >
+        <table>
+          <thead>
+            <tr>
+              <th>구분</th>
+              <th>항목</th>
+              <th>목적</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Google 로그인</td>
+              <td>Google 계정 식별자, 이메일, 프로필 사진, 인증·세션 정보</td>
+              <td>회원 식별, 로그인, 계정 보안</td>
+            </tr>
+            <tr>
+              <td>회원가입</td>
+              <td>이름 또는 닉네임, 연락처, 방침 동의 시각·버전</td>
+              <td>예약자 확인, 예약 관련 연락, 동의 기록</td>
+            </tr>
+            <tr>
+              <td>예약</td>
+              <td>예약 날짜, 기체, 인원, 요금, 신청·처리 상태</td>
+              <td>예약 접수·승인, 일정 관리 및 문의 처리</td>
+            </tr>
+            <tr>
+              <td>서비스 이용</td>
+              <td>접속 IP, 요청·오류·보안 로그</td>
+              <td>장애 대응, 부정 이용 방지</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <p>
         전화번호는 별도 본인 인증 없이 입력받습니다. 신용카드·결제 정보는
         수집하지 않습니다. 서비스 제공에 필요한 필수 정보의 수집에 동의하지

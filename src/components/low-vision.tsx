@@ -1,11 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Md } from "./material";
 
 export default function LowVision() {
   const [enabled, setEnabled] = useState(false);
-  const router = useRouter();
   useEffect(() => {
     const frame = requestAnimationFrame(() =>
       setEnabled(document.documentElement.dataset.lowVision === "true"),
@@ -26,7 +24,6 @@ export default function LowVision() {
           localStorage.setItem("royalsg-low-vision", String(next));
         } catch {}
         setEnabled(next);
-        router.push(next ? "/accessible" : "/");
       }}
     >
       <svg
