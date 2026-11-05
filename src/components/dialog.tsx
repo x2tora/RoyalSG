@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useId, useRef, type ReactNode } from "react";
+import { useLayoutEffect, useId, useRef, type ReactNode } from "react";
 export default function Modal({
   title,
   children,
@@ -11,7 +11,7 @@ export default function Modal({
 }) {
   const ref = useRef<HTMLDialogElement>(null),
     titleId = useId();
-  useEffect(() => {
+  useLayoutEffect(() => {
     const dialog = ref.current;
     dialog?.showModal();
     return () => dialog?.close();

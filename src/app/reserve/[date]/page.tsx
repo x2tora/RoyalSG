@@ -1,4 +1,3 @@
-import Home from "@/components/home";
 import { notFound } from "next/navigation";
 export const metadata = { title: "기기 대여 신청 · 로얄상구" };
 export default async function Page({
@@ -14,5 +13,5 @@ export default async function Page({
     new Date(timestamp).toISOString().slice(0, 10) !== date
   )
     notFound();
-  return <Home key={date} pane="book" reservationDate={date} />;
+  return null;
 }

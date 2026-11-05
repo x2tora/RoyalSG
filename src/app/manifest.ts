@@ -11,7 +11,7 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: "/",
     scope: "/",
     display: "standalone",
-    background_color: "#fffbff",
+    background_color: "#171319",
     theme_color: "#715b88",
     prefer_related_applications: false,
     related_applications: [
@@ -23,19 +23,19 @@ export default function manifest(): MetadataRoute.Manifest {
     ],
     icons: [
       {
-        src: "/app-icon?size=192",
+        src: "/app-icon?size=192&v=dark",
         sizes: "192x192",
         type: "image/png",
         purpose: "any",
       },
       {
-        src: "/app-icon?size=512",
+        src: "/app-icon?size=512&v=dark",
         sizes: "512x512",
         type: "image/png",
         purpose: "any",
       },
       {
-        src: "/app-icon?size=512",
+        src: "/app-icon?size=512&v=dark",
         sizes: "512x512",
         type: "image/png",
         purpose: "maskable",

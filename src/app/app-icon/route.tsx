@@ -14,7 +14,7 @@ export async function GET(request: Request) {
         height: "100%",
         alignItems: "center",
         justifyContent: "center",
-        background: "#fffbff",
+        background: "#171319",
       }}
     >
       <img
