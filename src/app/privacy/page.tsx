@@ -7,7 +7,7 @@ export default function Privacy() {
       <h1>개인정보 처리방침</h1>
       <p>
         로얄상구(이하 “운영자”)는 기기 대여 예약 서비스 제공을 위해 아래와 같이
-        개인정보를 처리합니다. 시행일 및 버전: {POLICY_VERSION}.
+        개인정보를 처리합니다. 시행일: {POLICY_VERSION}
       </p>
       <h2>1. 수집 항목과 목적</h2>
       <table>

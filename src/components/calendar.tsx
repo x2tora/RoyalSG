@@ -170,10 +170,10 @@ export default function Calendar({
       </div>
       <div className="legend" aria-label="캘린더 상태 안내">
         {[
-          ["available", "예약 가능", "날짜를 선택해 신청"],
-          ["restricted", "예약 제한", "운영일·신청 범위 외 또는 차단"],
-          ["pending", "대기", "신청 접수 · 관리자 승인 전"],
-          ["confirmed", "확정", "관리자 승인 완료"],
+          ["available", "예약 가능", "예약 가능한 날짜입니다."],
+          ["restricted", "예약 제한", "운영일·신청 범위 외 날짜입니다."],
+          ["pending", "대기", "승인 대기 상태입니다."],
+          ["confirmed", "확정", "승인 완료 상태입니다."],
         ].map(([state, title, description]) => (
           <div className={`legend-item ${state}`} key={state}>
             <span className="legend-swatch" aria-hidden="true" />

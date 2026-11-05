@@ -66,25 +66,26 @@ function Guide() {
   return (
     <details className="guide" open>
       <summary>
-        이용 전 꼭 확인해 주세요 <span>＋</span>
+        이용 전 꼭 확인해 주세요! <span>＋</span>
       </summary>
       <ul>
-        <li>운영: 일·월·화·수·목 예약 / 다음날 00:00~05:00 이용</li>
-        <li>하루 한 기체를 FREE PLAY 모드로 운영합니다.</li>
-        <li>1인 25,000원 · 2인 35,000원 / 온라인 결제 없음</li>
-        <li>대기·확정을 포함해 1인당 예약 1건만 보유할 수 있습니다.</li>
-        <li>당일 예약 불가, 매일 21시에 14일 뒤 날짜를 공개합니다.</li>
-        <li>승인 대기 예약은 직접 취소할 수 있습니다.</li>
+        <li>운영: 일·월·화·수·목 다음날 00:00~05:00</li>
+        <li>예: 10월 9일 예약 → 10월 10일 00:00~05:00 이용 가능</li>
+        <li>대여 기체는 FREE PLAY 모드로 운영됩니다.</li>
+        <li>요금: 1인 25,000원 · 2인 35,000원</li>
+        <li>대여 시작 전 현장 결제 부탁드립니다.</li>
+        <li>대기·확정을 포함해 1인당 예약 1건만 보유 가능합니다.</li>
+        <li>당일·현장 대여 불가능합니다.</li>
+        <li>대기 상태의 예약은 직접 취소가 가능합니다.</li>
         <li>
-          확정 예약의 취소는 예약일 5일 전까지{" "}
+          확정 대여의 취소는 대여일 5일 전까지{" "}
           <a href={CONTACT} target="_blank" rel="noreferrer">
-            카카오 문의
+            카카오 1:1 문의
           </a>
           로 가능합니다.
         </li>
-        <li>예약일 5일 전을 지난 진행 예약이 있으면 탈퇴할 수 없습니다.</li>
-        <li>예: 3월 9일 예약 → 3월 10일 00:00~05:00 이용</li>
-        <li>시범 운영 중으로 세부 내용은 변경될 수 있습니다.</li>
+        <li>취소 불가능한 대여 내역 보유 시, 회원 탈퇴가 불가능합니다.</li>
+        <li>시범 운영 중으로 세부 내용은 언제든 변경될 수 있습니다.</li>
       </ul>
     </details>
   );
@@ -152,8 +153,8 @@ export default function Home({
         setClock(
           new Date(
             serverClock.current.time +
-              Date.now() -
-              serverClock.current.received,
+            Date.now() -
+            serverClock.current.received,
           ),
         );
     }, 1000);
@@ -174,7 +175,7 @@ export default function Home({
       try {
         seen = !!sessionStorage.getItem("royalsg-intro");
         sessionStorage.setItem("royalsg-intro", "1");
-      } catch {}
+      } catch { }
       document.documentElement.dataset.introSeen = "true";
       setIntro(
         seen || matchMedia("(prefers-reduced-motion: reduce)").matches
@@ -277,7 +278,7 @@ export default function Home({
           <p className="notice">{data.message}</p>
         ) : null}
         {(signup && pane === "signup") ||
-        (pane === "profile" && user?.profile) ? (
+          (pane === "profile" && user?.profile) ? (
           <section className="card">
             <div className="section-heading">
               <div>
@@ -492,11 +493,11 @@ export default function Home({
               </Md>
             </div>
             {selected &&
-            data &&
-            user?.profile &&
-            (active ||
-              !available(selected, now) ||
-              data.slots.some((slot) => slot.rental_date === selected)) ? (
+              data &&
+              user?.profile &&
+              (active ||
+                !available(selected, now) ||
+                data.slots.some((slot) => slot.rental_date === selected)) ? (
               <p className="notice" role="status">
                 {active
                   ? "진행 중인 예약이 있어 새로 신청할 수 없습니다."
@@ -548,11 +549,11 @@ export default function Home({
         </footer>
       </div>
       {selected &&
-      data &&
-      user?.profile &&
-      !active &&
-      available(selected, now) &&
-      !data.slots.some((slot) => slot.rental_date === selected) ? (
+        data &&
+        user?.profile &&
+        !active &&
+        available(selected, now) &&
+        !data.slots.some((slot) => slot.rental_date === selected) ? (
         <Modal title="기기 대여 신청" onClose={() => !busy && back()}>
           <BookingForm
             date={selected}
@@ -784,7 +785,7 @@ function Admin({
               {b.phone ? <a href={"tel:" + b.phone}>{b.phone}</a> : null}
             </p>
             {["pending", "confirmed"].includes(b.status) &&
-            endsAt(b.rental_date) > now ? (
+              endsAt(b.rental_date) > now ? (
               <div className="review-actions">
                 {b.status === "pending" ? (
                   <>
