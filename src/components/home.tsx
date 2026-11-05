@@ -6,7 +6,6 @@ import {
   useRef,
   useState,
   type FormEvent,
-  type ReactNode,
 } from "react";
 import {
   addDays,
@@ -17,10 +16,12 @@ import {
   type Booking,
   type Slot,
 } from "@/lib/rules";
-import { MaterialLoader, Md } from "./material";
+import { MaterialLoader, Md, TextField, Checkbox } from "./material";
 import Theme from "./theme";
 import Calendar from "./calendar";
 import BookingForm from "./booking-form";
+import Modal from "./dialog";
+import InstallApp from "./install-app";
 type State = {
   configured: boolean;
   user: null | {
@@ -49,40 +50,6 @@ async function command(action: string, args: Record<string, unknown> = {}) {
   const result = await response.json();
   if (!response.ok) throw new Error(result.error);
   return result;
-}
-function Modal({
-  title,
-  children,
-  onClose,
-}: {
-  title: string;
-  children: ReactNode;
-  onClose: () => void;
-}) {
-  const ref = useRef<HTMLDialogElement>(null);
-  useEffect(() => {
-    const dialog = ref.current;
-    dialog?.showModal();
-    return () => dialog?.close();
-  }, []);
-  return (
-    <dialog
-      ref={ref}
-      onCancel={onClose}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-      aria-labelledby="modal-title"
-    >
-      <div className="dialog-heading">
-        <h2 id="modal-title">{title}</h2>
-        <button aria-label="닫기" onClick={onClose}>
-          ×
-        </button>
-      </div>
-      {children}
-    </dialog>
-  );
 }
 function Guide() {
   return (
@@ -171,7 +138,11 @@ export default function Home() {
         seen = !!sessionStorage.getItem("royalsg-intro");
         sessionStorage.setItem("royalsg-intro", "1");
       } catch {}
-      setIntro(seen ? "done" : "play");
+      setIntro(
+        seen || matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "done"
+          : "play",
+      );
       if (new URLSearchParams(location.search).has("error"))
         setError("Google 로그인에 실패했습니다. 다시 시도해 주세요.");
     });
@@ -295,36 +266,32 @@ export default function Home() {
               {user?.profile?.name ?? "예약에 사용할 정보를 입력해 주세요."}
             </p>
             <form onSubmit={profileSubmit}>
-              <label>
-                이름 또는 닉네임
-                <input
-                  required
-                  maxLength={30}
-                  autoComplete="nickname"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-              </label>
-              <label>
-                연락처
-                <input
-                  required
-                  type="tel"
-                  inputMode="numeric"
-                  pattern="010-[0-9]{4}-[0-9]{4}"
-                  autoComplete="tel-national"
-                  value={phone}
-                  onChange={(e) => setPhone(phoneFormat(e.target.value))}
-                  placeholder="010-0000-0000"
-                />
-              </label>
+              <TextField
+                label="이름 또는 닉네임"
+                required
+                maxLength={30}
+                autoComplete="nickname"
+                value={name}
+                onValue={setName}
+              />
+              <TextField
+                label="연락처"
+                required
+                type="tel"
+                inputMode="numeric"
+                pattern="010-[0-9]{4}-[0-9]{4}"
+                autoComplete="tel-national"
+                value={phone}
+                onValue={(value) => setPhone(phoneFormat(value))}
+                placeholder="010-0000-0000"
+              />
               {signup ? (
                 <label className="check">
-                  <input
+                  <Checkbox
+                    label="개인정보 처리방침 동의 (필수)"
                     required
-                    type="checkbox"
                     checked={consent}
-                    onChange={(e) => setConsent(e.target.checked)}
+                    onChecked={setConsent}
                   />
                   <span>
                     <a href="/privacy" target="_blank">
@@ -341,6 +308,7 @@ export default function Home() {
             {signup ? (
               <Md
                 kind="text-button"
+                className="signup-cancel"
                 type="button"
                 disabled={busy}
                 onClick={() => {
@@ -516,6 +484,7 @@ export default function Home() {
           />
         ) : null}
         <footer>
+          <InstallApp ready={intro === "done"} />
           <a href="/privacy">개인정보 처리방침</a>
           <p>
             © 2026{" "}
@@ -615,17 +584,15 @@ export default function Home() {
                 });
             }}
           >
-            <label>
-              본인의 등록 전화번호
-              <input
-                required
-                type="tel"
-                pattern="010-[0-9]{4}-[0-9]{4}"
-                value={deletePhone}
-                readOnly={deleteConfirm}
-                onChange={(e) => setDeletePhone(phoneFormat(e.target.value))}
-              />
-            </label>
+            <TextField
+              label="본인의 등록 전화번호"
+              required
+              type="tel"
+              pattern="010-[0-9]{4}-[0-9]{4}"
+              value={deletePhone}
+              readOnly={deleteConfirm}
+              onValue={(value) => setDeletePhone(phoneFormat(value))}
+            />
             {error ? (
               <p role="alert" className="error">
                 {error}

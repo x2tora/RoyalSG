@@ -120,8 +120,12 @@ test("기체·인원을 선택해 예약 신청", async ({ page }) => {
   const commands = await mock(page, initial());
   await page.getByRole("button", { name: /기기 예약/ }).click();
   await page.getByRole("button", { name: "2026-11-10 예약 가능" }).click();
-  await page.getByLabel("대여 기체").selectOption("B");
-  await page.getByLabel("이용 인원").selectOption("2");
+  await page.getByRole("combobox", { name: "대여 기체" }).click();
+  await page.getByRole("option", { name: "B 기체", exact: true }).click();
+  await page.getByRole("combobox", { name: "이용 인원" }).click();
+  await page
+    .getByRole("option", { name: "2인 · 35,000원", exact: true })
+    .click();
   await expect(
     page.getByRole("button", { name: "예약 신청", exact: true }),
   ).toBeDisabled();
@@ -138,11 +142,17 @@ test("기체·인원을 선택해 예약 신청", async ({ page }) => {
   await expect(
     page.getByRole("button", { name: "예약 신청", exact: true }),
   ).toBeEnabled();
-  await page.getByLabel("이용 인원").selectOption("1");
+  await page.getByRole("combobox", { name: "이용 인원" }).click();
+  await page
+    .getByRole("option", { name: "1인 · 25,000원", exact: true })
+    .click();
   await expect(
     page.getByRole("button", { name: "예약 신청", exact: true }),
   ).toBeDisabled();
-  await page.getByLabel("이용 인원").selectOption("2");
+  await page.getByRole("combobox", { name: "이용 인원" }).click();
+  await page
+    .getByRole("option", { name: "2인 · 35,000원", exact: true })
+    .click();
   for (const checkbox of await page.getByRole("checkbox").all())
     await checkbox.check();
   await page.getByRole("button", { name: "예약 신청", exact: true }).click();

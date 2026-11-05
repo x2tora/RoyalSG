@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#715b88" />
+    <title>연결 확인 · 로얄상구</title>
+    <style>
+      body {
+        margin: 0;
+        background: #fffbff;
+        color: #1e1b20;
+        font-family: system-ui, sans-serif;
+        text-align: center;
+        padding: 20vh 24px;
+      }
+      img {
+        width: 120px;
+        height: 120px;
+        object-fit: contain;
+      }
+      h1 {
+        font-size: 24px;
+        font-weight: 500;
+        line-height: 1.4;
+      }
+      p {
+        font-size: 14px;
+        line-height: 1.6;
+      }
+      button {
+        font: 500 14px system-ui;
+        background: #715b88;
+        color: white;
+        border: 0;
+        border-radius: 24px;
+        min-height: 48px;
+        padding: 0 24px;
+        margin-top: 16px;
+      }
+      @media (prefers-color-scheme: dark) {
+        body {
+          background: #171319;
+          color: #eae0eb;
+        }
+        button {
+          background: #d6bce9;
+          color: #3c2751;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <img src="/logo.png" alt="로얄상구" />
+    <h1>인터넷 연결을 확인해 주세요.</h1>
+    <p>예약 및 일정 조회에는 인터넷 연결이 필요합니다.</p>
+    <button type="button" onclick="location.reload()">다시 시도</button>
+  </body>
+</html>

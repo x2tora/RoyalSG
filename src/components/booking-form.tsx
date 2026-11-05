@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { addDays, CONTACT } from "@/lib/rules";
-import { Md } from "./material";
+import { Md, Select, Checkbox } from "./material";
 
 export default function BookingForm({
   date,
@@ -57,37 +57,32 @@ export default function BookingForm({
           if (allAgreed && !busy) onSubmit(machine, people);
         }}
       >
-        <label>
-          대여 기체
-          <select
-            value={machine}
-            disabled={busy}
-            onChange={(event) => {
-              setMachine(event.target.value);
-              setAgreed(agreed.map(() => false));
-            }}
-          >
-            {["A", "B", "C"].map((value) => (
-              <option key={value} value={value}>
-                {value} 기체
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          이용 인원
-          <select
-            value={people}
-            disabled={busy}
-            onChange={(event) => {
-              setPeople(Number(event.target.value));
-              setAgreed(agreed.map(() => false));
-            }}
-          >
-            <option value="1">1인 · 25,000원</option>
-            <option value="2">2인 · 35,000원</option>
-          </select>
-        </label>
+        <Select
+          label="대여 기체"
+          value={machine}
+          disabled={busy}
+          onValue={(value) => {
+            setMachine(value);
+            setAgreed(agreed.map(() => false));
+          }}
+          options={["A", "B", "C"].map((value) => ({
+            value,
+            label: `${value} 기체`,
+          }))}
+        />
+        <Select
+          label="이용 인원"
+          value={String(people)}
+          disabled={busy}
+          onValue={(value) => {
+            setPeople(Number(value));
+            setAgreed(agreed.map(() => false));
+          }}
+          options={[
+            { value: "1", label: "1인 · 25,000원" },
+            { value: "2", label: "2인 · 35,000원" },
+          ]}
+        />
         <details className="booking-agreements">
           <summary>
             이용 안내 확인 및 동의{" "}
@@ -98,15 +93,15 @@ export default function BookingForm({
           <div className="agreement-list">
             {items.map((item, index) => (
               <label className="agreement-item" key={item.title}>
-                <input
-                  type="checkbox"
+                <Checkbox
+                  label={`${item.title} 동의 (필수)`}
                   required
                   checked={agreed[index]}
                   disabled={busy}
-                  onChange={(event) =>
+                  onChecked={(checked) =>
                     setAgreed(
                       agreed.map((value, position) =>
-                        position === index ? event.target.checked : value,
+                        position === index ? checked : value,
                       ),
                     )
                   }
