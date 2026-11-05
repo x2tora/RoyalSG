@@ -48,6 +48,8 @@ npm run dev
 
 ## Vercel·GitHub
 
+화면은 `/`(홈), `/signup`(회원가입), `/mypage`(마이페이지), `/reserve`(기기 예약), `/reserve/YYYY-MM-DD`(해당 날짜 신청), `/calendar`(예약 조회), `/admin`(예약 관리)로 나뉩니다. 화면 이동은 브라우저 방문 기록에 추가되며 뒤로가기로 이전 화면에 돌아갈 수 있습니다. 로그인과 권한이 필요한 페이지는 직접 접속하더라도 계정 상태에 따라 이동합니다.
+
 저장소: `xitora/RoyalSG`, Vercel: `x1t0ra/royalsg`.
 
 운영 환경변수: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `NEXT_PUBLIC_SITE_URL`.

@@ -13,6 +13,7 @@ import {
   CONTACT,
   endsAt,
   phoneFormat,
+  available,
   type Booking,
   type Slot,
 } from "@/lib/rules";
@@ -22,6 +23,16 @@ import Calendar from "./calendar";
 import BookingForm from "./booking-form";
 import Modal from "./dialog";
 import InstallApp from "./install-app";
+import { useRouter } from "next/navigation";
+type Pane = "home" | "signup" | "profile" | "book" | "calendar" | "admin";
+const pagePaths: Record<Pane, string> = {
+  home: "/",
+  signup: "/signup",
+  profile: "/mypage",
+  book: "/reserve",
+  calendar: "/calendar",
+  admin: "/admin",
+};
 type State = {
   configured: boolean;
   user: null | {
@@ -78,13 +89,18 @@ function Guide() {
     </details>
   );
 }
-export default function Home() {
+export default function Home({
+  pane = "home",
+  reservationDate,
+}: {
+  pane?: Pane;
+  reservationDate?: string;
+}) {
+  const router = useRouter();
   const [data, setData] = useState<State | null>(null),
-    [pane, setPane] = useState("home"),
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false),
     [intro, setIntro] = useState("loading"),
-    [selected, setSelected] = useState<string | null>(null),
     [historyCount, setHistoryCount] = useState(5),
     [deleting, setDeleting] = useState(false),
     [cancellingSignup, setCancellingSignup] = useState(false),
@@ -96,12 +112,19 @@ export default function Home() {
     [consent, setConsent] = useState(false),
     [clock, setClock] = useState<Date | null>(null);
   const serverClock = useRef({ time: 0, received: 0 });
+  const profileInitialized = useRef(false);
+  const selected = reservationDate ?? null;
   const refresh = useCallback(async () => {
     try {
       const response = await fetch("/api/service", { cache: "no-store" }),
         result = await response.json();
       if (!response.ok) throw new Error(result.error);
       setData(result);
+      if (result.user?.profile && !profileInitialized.current) {
+        profileInitialized.current = true;
+        setName(result.user.profile.name);
+        setPhone(result.user.profile.phone);
+      }
       serverClock.current = {
         time: Date.parse(result.now),
         received: Date.now(),
@@ -111,6 +134,18 @@ export default function Home() {
       setError(e instanceof Error ? e.message : "연결에 실패했습니다.");
     }
   }, []);
+  useEffect(() => {
+    if (!data?.configured) return;
+    if (data.user && !data.user.profile && pane !== "signup")
+      router.replace("/signup");
+    else if (pane === "signup" && (!data.user || data.user.profile))
+      router.replace("/");
+    else if (
+      (pane === "profile" || pane === "book" || pane === "admin") &&
+      (!data.user || (pane === "admin" && !data.admin))
+    )
+      router.replace("/");
+  }, [data, pane, router]);
   useEffect(() => {
     const initial = requestAnimationFrame(() => void refresh());
     const ticker = setInterval(() => {
@@ -182,17 +217,18 @@ export default function Home() {
     restricted = active
       ? blocksDeletion(active.rental_date, active.status, now)
       : false;
-  const navigate = (next: string) => {
-    if (next === "profile" && user?.profile) {
-      setName(user.profile.name);
-      setPhone(user.profile.phone);
-    }
+  const navigate = (next: Pane, replace = false) => {
     setError("");
-    setPane(next);
+    if (replace) router.replace(pagePaths[next]);
+    else router.push(pagePaths[next]);
+  };
+  const back = () => {
+    if (window.history.length > 1) router.back();
+    else router.replace(selected ? "/reserve" : "/");
   };
   function profileSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    void run("profile", { name, phone, consent }, () => navigate("home"));
+    void run("profile", { name, phone, consent }, () => navigate("home", true));
   }
   return (
     <main className={`shell intro-${intro}`}>
@@ -242,15 +278,16 @@ export default function Home() {
         {data && !data.configured ? (
           <p className="notice">{data.message}</p>
         ) : null}
-        {signup || pane === "profile" ? (
+        {(signup && pane === "signup") ||
+        (pane === "profile" && user?.profile) ? (
           <section className="card">
             <div className="section-heading">
               <div>
                 <h2>{signup ? "회원가입" : "마이페이지"}</h2>
               </div>
               {!signup ? (
-                <Md kind="text-button" onClick={() => navigate("home")}>
-                  홈으로
+                <Md kind="text-button" onClick={back}>
+                  뒤로가기
                 </Md>
               ) : null}
             </div>
@@ -373,7 +410,7 @@ export default function Home() {
                       kind="text-button"
                       disabled={busy}
                       onClick={() =>
-                        void run("logout", {}, () => navigate("home"))
+                        void run("logout", {}, () => navigate("home", true))
                       }
                     >
                       로그아웃
@@ -470,17 +507,29 @@ export default function Home() {
               <div>
                 <h2>{pane === "book" ? "기기 예약" : "예약 조회"}</h2>
               </div>
-              <Md kind="text-button" onClick={() => navigate("home")}>
-                홈으로
+              <Md kind="text-button" onClick={back}>
+                뒤로가기
               </Md>
             </div>
+            {selected &&
+            data &&
+            user?.profile &&
+            (active ||
+              !available(selected, now) ||
+              data.slots.some((slot) => slot.rental_date === selected)) ? (
+              <p className="notice" role="status">
+                {active
+                  ? "진행 중인 예약이 있어 새로 신청할 수 없습니다."
+                  : "선택한 날짜는 현재 예약할 수 없습니다. 다른 날짜를 선택해 주세요."}
+              </p>
+            ) : null}
             <Calendar
               slots={data?.slots ?? []}
               now={now}
               readonly={
                 pane === "calendar" || !user || !!active || !data?.configured
               }
-              onSelect={setSelected}
+              onSelect={(date) => router.push(`/reserve/${date}`)}
             />
             {pane === "calendar" && user ? (
               <Md disabled={!!active} onClick={() => navigate("book")}>
@@ -496,7 +545,7 @@ export default function Home() {
             now={now}
             busy={busy}
             run={run}
-            back={() => navigate("home")}
+            back={back}
           />
         ) : null}
         <footer>
@@ -518,19 +567,20 @@ export default function Home() {
           </p>
         </footer>
       </div>
-      {selected ? (
-        <Modal
-          title="기기 대여 신청"
-          onClose={() => !busy && setSelected(null)}
-        >
+      {selected &&
+      data &&
+      user?.profile &&
+      !active &&
+      available(selected, now) &&
+      !data.slots.some((slot) => slot.rental_date === selected) ? (
+        <Modal title="기기 대여 신청" onClose={() => !busy && back()}>
           <BookingForm
             date={selected}
             busy={busy}
             error={error}
             onSubmit={(machine, people) =>
               void run("book", { date: selected, machine, people }, () => {
-                setSelected(null);
-                navigate("home");
+                navigate("home", true);
               })
             }
           />
@@ -606,7 +656,7 @@ export default function Home() {
                   setName("");
                   setPhone("");
                   setConsent(false);
-                  navigate("home");
+                  navigate("home", true);
                 })
               }
             >
@@ -634,7 +684,7 @@ export default function Home() {
               } else
                 void run("delete", { phone: deletePhone }, () => {
                   setDeleting(false);
-                  navigate("home");
+                  navigate("home", true);
                 });
             }}
           >
@@ -700,7 +750,7 @@ function Admin({
       <div className="section-heading">
         <h2>예약 관리</h2>
         <Md kind="text-button" onClick={back}>
-          홈으로
+          뒤로가기
         </Md>
       </div>
       <div className="card">
