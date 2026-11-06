@@ -22,16 +22,16 @@ export async function GET(request: Request) {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          width: maskable ? size : size * 0.88,
-          height: maskable ? size : size * 0.88,
+          width: size,
+          height: size,
           borderRadius: maskable ? 0 : size * 0.2,
           background: "#171319",
         }}
       >
         <img
           src={`data:image/png;base64,${logo.toString("base64")}`}
-          width={size * (maskable ? 0.56 : 0.64)}
-          height={size * (maskable ? 0.56 : 0.64)}
+          width={size * (maskable ? 0.74 : 0.94)}
+          height={size * (maskable ? 0.74 : 0.94)}
           alt=""
           style={{ objectFit: "contain" }}
         />

@@ -6,8 +6,8 @@ export const metadata: Metadata = {
   title: "로얄상구 · 기기 예약",
   description: "로얄상구 밤샘 기기 대여 예약 서비스",
   icons: {
-    icon: "/app-icon?size=192&purpose=any&v=2",
-    apple: "/app-icon?size=192&purpose=maskable&v=2",
+    icon: "/app-icon?size=192&purpose=any&v=3",
+    apple: "/app-icon?size=192&purpose=maskable&v=3",
   },
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, title: "로얄상구", statusBarStyle: "default" },
