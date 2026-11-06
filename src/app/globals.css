@@ -1425,3 +1425,34 @@ dialog[data-closing="true"]::backdrop {
   padding: 0;
   max-width: 100%;
 }
+
+.delete-final {
+  margin-top: 24px;
+}
+.delete-warning {
+  padding: 20px;
+  border-radius: 16px;
+  background: var(--md-sys-color-error-container);
+  color: var(--md-sys-color-on-error-container);
+}
+.delete-warning strong {
+  font-weight: 600;
+}
+.delete-warning p {
+  margin-top: 8px;
+}
+.delete-final-actions {
+  display: grid;
+  gap: 12px;
+  margin-top: 32px;
+}
+.danger-button {
+  --md-filled-button-container-color: var(--md-sys-color-error);
+  --md-filled-button-label-text-color: var(--md-sys-color-on-error);
+  --md-filled-button-hover-label-text-color: var(--md-sys-color-on-error);
+  --md-filled-button-hover-state-layer-color: var(--md-sys-color-on-error);
+  --md-filled-button-focus-label-text-color: var(--md-sys-color-on-error);
+  --md-filled-button-focus-state-layer-color: var(--md-sys-color-on-error);
+  --md-filled-button-pressed-label-text-color: var(--md-sys-color-on-error);
+  --md-filled-button-pressed-state-layer-color: var(--md-sys-color-on-error);
+}

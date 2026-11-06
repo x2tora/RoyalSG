@@ -729,41 +729,78 @@ export default function Home({
             <br />
             진행 중인 예약은 자동 취소됩니다.
           </p>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (!deleteConfirm) {
-                if (deletePhone !== user?.profile?.phone) {
-                  setError("등록된 전화번호와 일치하지 않습니다.");
-                  return;
+          {deleteConfirm ? (
+            <section className="delete-final" aria-label="회원탈퇴 최종 확인">
+              <div className="delete-warning">
+                <strong>계정과 개인정보가 삭제됩니다.</strong>
+                <p>
+                  진행 중인 예약도 취소되며, 탈퇴 후에는 되돌릴 수 없습니다.
+                </p>
+              </div>
+              {error ? (
+                <p role="alert" className="error">
+                  {error}
+                </p>
+              ) : null}
+              <div className="delete-final-actions">
+                <Md
+                  kind="outlined-button"
+                  type="button"
+                  disabled={busy}
+                  onClick={() => {
+                    setDeleting(false);
+                    setError("");
+                  }}
+                >
+                  탈퇴하지 않고 돌아가기
+                </Md>
+                <Md
+                  className="danger-button"
+                  type="button"
+                  disabled={busy || restricted}
+                  onClick={() =>
+                    void run("delete", { phone: deletePhone }, () => {
+                      setDeleting(false);
+                      navigate("home", true);
+                    })
+                  }
+                >
+                  확인, 회원탈퇴
+                </Md>
+              </div>
+            </section>
+          ) : (
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (!deleteConfirm) {
+                  if (deletePhone !== user?.profile?.phone) {
+                    setError("등록된 전화번호와 일치하지 않습니다.");
+                    return;
+                  }
+                  setError("");
+                  setDeleteConfirm(true);
                 }
-                setError("");
-                setDeleteConfirm(true);
-              } else
-                void run("delete", { phone: deletePhone }, () => {
-                  setDeleting(false);
-                  navigate("home", true);
-                });
-            }}
-          >
-            <TextField
-              label="본인의 등록 전화번호"
-              required
-              type="tel"
-              pattern="010-[0-9]{4}-[0-9]{4}"
-              value={deletePhone}
-              readOnly={deleteConfirm}
-              onValue={(value) => setDeletePhone(phoneFormat(value))}
-            />
-            {error ? (
-              <p role="alert" className="error">
-                {error}
-              </p>
-            ) : null}
-            <Md disabled={busy || restricted} type="submit">
-              {deleteConfirm ? "확인, 탈퇴합니다" : "전화번호 확인"}
-            </Md>
-          </form>
+              }}
+            >
+              <TextField
+                label="본인의 등록 전화번호"
+                required
+                type="tel"
+                pattern="010-[0-9]{4}-[0-9]{4}"
+                value={deletePhone}
+                onValue={(value) => setDeletePhone(phoneFormat(value))}
+              />
+              {error ? (
+                <p role="alert" className="error">
+                  {error}
+                </p>
+              ) : null}
+              <Md disabled={busy || restricted} type="submit">
+                전화번호 확인
+              </Md>
+            </form>
+          )}
         </Modal>
       ) : null}
     </main>
