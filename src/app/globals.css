@@ -1075,11 +1075,33 @@ dialog {
   border-color: var(--calendar-confirmed-border);
 }
 
+.brand {
+  transition: padding 400ms ease;
+}
 .brand-link {
   display: block;
   color: inherit;
   text-decoration: none;
   border-radius: 24px;
+}
+.logo {
+  transition:
+    width 400ms ease,
+    height 400ms ease;
+}
+.brand h1 {
+  transition:
+    font-size 400ms ease,
+    line-height 400ms ease,
+    letter-spacing 400ms ease;
+}
+.service-title {
+  transition:
+    font-size 400ms ease,
+    margin-top 400ms ease;
+}
+.topbar {
+  transition: height 400ms ease;
 }
 md-icon-button,
 md-outlined-icon-button {

@@ -3,7 +3,6 @@
 import {
   useCallback,
   useEffect,
-  useLayoutEffect,
   useRef,
   useState,
   type FormEvent,
@@ -126,8 +125,6 @@ export default function Home({
   children?: ReactNode;
 }) {
   const router = useRouter();
-  const shellRef = useRef<HTMLElement>(null);
-  const headerRects = useRef<DOMRect[]>([]);
   const [data, setData] = useState<State | null>(null),
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false),
@@ -141,41 +138,6 @@ export default function Home({
     [name, setName] = useState(""),
     [consent, setConsent] = useState(false),
     [clock, setClock] = useState<Date | null>(null);
-  const compactHeader = pane !== "home";
-  useLayoutEffect(() => {
-    if (intro !== "done") {
-      headerRects.current = [];
-      return;
-    }
-    const elements = Array.from(
-      shellRef.current?.querySelectorAll<HTMLElement>(
-        ".brand .logo, .brand h1, .brand .service-title",
-      ) ?? [],
-    );
-    const next = elements.map((element) => element.getBoundingClientRect());
-    const reduced =
-      matchMedia("(prefers-reduced-motion: reduce)").matches ||
-      document.documentElement.dataset.lowVision === "true";
-    const animations = elements.flatMap((element, index) => {
-      const previous = headerRects.current[index];
-      const target = next[index];
-      if (!previous || !target.width || !target.height || reduced) return [];
-      return [
-        element.animate(
-          [
-            {
-              transformOrigin: "top left",
-              transform: `translate(${previous.left - target.left}px, ${previous.top - target.top}px) scale(${previous.width / target.width}, ${previous.height / target.height})`,
-            },
-            { transformOrigin: "top left", transform: "none" },
-          ],
-          { duration: 400, easing: "cubic-bezier(0.2, 0, 0, 1)" },
-        ),
-      ];
-    });
-    headerRects.current = next;
-    return () => animations.forEach((animation) => animation.cancel());
-  }, [compactHeader, intro]);
   const serverClock = useRef({ time: 0, received: 0 });
   const profileInitialized = useRef(false);
   const refreshing = useRef(false);
@@ -325,7 +287,6 @@ export default function Home({
   }
   return (
     <main
-      ref={shellRef}
       className={`shell ${pane !== "home" ? "compact-header" : ""} intro-${intro}`}
     >
       <MaterialLoader />
