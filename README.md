@@ -32,7 +32,43 @@ npm run dev
 
 예약 생성·관리자 처리·탈퇴·만료 처리에 같은 PostgreSQL 트랜잭션 advisory lock을 사용합니다. `active` 예약의 날짜·회원 유일 인덱스로 중복을 추가 방지합니다. 이용 완료는 다음날 05시 기준으로, 새 요청과 일일 작업에서 한도를 해제합니다.
 
-관리자는 Google이 검증한 identity의 이메일이 `xitora.works@gmail.com`인 계정이 최초 회원정보를 저장할 때 부여됩니다. 사용자 수정 가능 메타데이터는 권한 판정에 사용하지 않습니다.
+관리자 권한은 `private.admins` 테이블로 관리합니다. 기존 관리자는 유지하며, 회원정보 저장으로 권한이 자동 부여되거나 복구되지 않습니다. 추가 대상은 먼저 Google 로그인과 회원가입을 완료해야 합니다. 아래 SQL은 Supabase SQL Editor에서 실행합니다. 일반 회원의 API에는 관리자 변경 권한을 부여하지 않습니다.
+
+현재 관리자 조회:
+
+```sql
+select u.id, u.email
+from private.admins a join auth.users u on u.id = a.user_id
+order by u.email;
+```
+
+관리자 추가 (`admin@example.com`을 대상 Google 이메일로 변경):
+
+```sql
+insert into private.admins (user_id)
+select u.id
+from auth.users u
+join public.profiles p on p.id = u.id
+where lower(u.email) = lower('admin@example.com')
+  and u.email_confirmed_at is not null
+  and exists (
+    select 1 from auth.identities i
+    where i.user_id = u.id and i.provider = 'google'
+      and lower(i.identity_data->>'email') = lower(u.email)
+      and i.identity_data->>'email_verified' = 'true'
+  )
+on conflict (user_id) do nothing;
+```
+
+관리자 제거 (계정·예약은 유지):
+
+```sql
+delete from private.admins a
+using auth.users u
+where a.user_id = u.id and lower(u.email) = lower('admin@example.com');
+```
+
+변경 후 조회 SQL로 반영 여부를 확인합니다. 권한은 DB에서 요청마다 검사하므로 제거 즉시 관리자 작업이 차단되며, 화면은 새로고침 또는 다음 자동 조회에 반영됩니다.
 
 `pg_cron`은 매일 한국 시간 03시에 실제 이용 종료 후 90일이 지난 예약의 `user_id`를 제거합니다. `private.admins`·`date_blocks`의 RLS 무정책 안내는 직접 접근을 차단하려는 의도입니다.
 
