@@ -1,18 +1,8 @@
-import Link from "next/link";
 import { CONTACT, POLICY_VERSION } from "@/lib/rules";
-import LowVision from "@/components/low-vision";
-import Theme from "@/components/theme";
-import { MaterialLoader } from "@/components/material";
+export const metadata = { title: "개인정보 처리방침 · 로얄상구" };
 export default function Privacy() {
   return (
-    <main className="privacy">
-      <MaterialLoader />
-      <header className="topbar">
-        <LowVision />
-        <Theme />
-      </header>
-      <Link href="/">← 홈으로</Link>
-      <h1>개인정보 처리방침</h1>
+    <article className="privacy">
       <p>
         로얄상구(이하 “운영자”)는 기기 대여 예약 서비스 제공을 위해 아래와 같이
         개인정보를 처리합니다. 시행일: {POLICY_VERSION}
@@ -182,6 +172,6 @@ export default function Privacy() {
         처리 항목·목적·보유 기간 등 방침이 변경되면 서비스 내에 안내하며 필요한
         경우 다시 동의를 받습니다.
       </p>
-    </main>
+    </article>
   );
 }

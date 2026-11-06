@@ -6,6 +6,7 @@ import {
   useRef,
   useState,
   type FormEvent,
+  type ReactNode,
 } from "react";
 import {
   addDays,
@@ -26,7 +27,8 @@ import InstallApp from "./install-app";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import LowVision from "./low-vision";
-type Pane = "home" | "signup" | "profile" | "book" | "calendar" | "admin";
+type Pane =
+  "home" | "signup" | "profile" | "book" | "calendar" | "admin" | "privacy";
 const pagePaths: Record<Pane, string> = {
   home: "/",
   signup: "/signup",
@@ -34,6 +36,7 @@ const pagePaths: Record<Pane, string> = {
   book: "/reserve",
   calendar: "/calendar",
   admin: "/admin",
+  privacy: "/privacy",
 };
 type State = {
   configured: boolean;
@@ -115,9 +118,11 @@ function Guide() {
 export default function Home({
   pane = "home",
   reservationDate,
+  children,
 }: {
   pane?: Pane;
   reservationDate?: string;
+  children?: ReactNode;
 }) {
   const router = useRouter();
   const [data, setData] = useState<State | null>(null),
@@ -164,7 +169,12 @@ export default function Home({
   }, []);
   useEffect(() => {
     if (!data?.configured) return;
-    if (data.user && !data.user.profile && pane !== "signup")
+    if (
+      data.user &&
+      !data.user.profile &&
+      pane !== "signup" &&
+      pane !== "privacy"
+    )
       router.replace("/signup");
     else if (pane === "signup" && (!data.user || data.user.profile))
       router.replace("/");
@@ -383,10 +393,8 @@ export default function Home({
                     onChecked={setConsent}
                   />
                   <span>
-                    <a href="/privacy" target="_blank">
-                      개인정보 처리방침
-                    </a>
-                    에 동의합니다. (필수)
+                    <Link href="/privacy">개인정보 처리방침</Link>에 동의합니다.
+                    (필수)
                   </span>
                 </label>
               ) : null}
@@ -580,9 +588,22 @@ export default function Home({
             back={back}
           />
         ) : null}
+        {pane === "privacy" ? (
+          <section key="privacy">
+            <div className="section-heading">
+              <h2>개인정보 처리방침</h2>
+              <Md kind="text-button" onClick={back}>
+                뒤로가기
+              </Md>
+            </div>
+            {children}
+          </section>
+        ) : (
+          children
+        )}
         <footer>
           <InstallApp ready={intro === "done"} />
-          <a href="/privacy">개인정보 처리방침</a>
+          <Link href="/privacy">개인정보 처리방침</Link>
           <p>
             © 2026{" "}
             <a

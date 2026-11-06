@@ -1416,3 +1416,12 @@ dialog[data-closing="true"]::backdrop {
 :root[data-low-vision="true"] .privacy th {
   background: var(--md-sys-color-surface-container);
 }
+
+.shell .privacy {
+  padding: 0;
+  max-width: 100%;
+}
+:root[data-low-vision="true"] .shell .privacy {
+  padding: 0;
+  max-width: 100%;
+}
