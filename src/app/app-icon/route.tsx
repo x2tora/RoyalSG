@@ -30,8 +30,8 @@ export async function GET(request: Request) {
       >
         <img
           src={`data:image/png;base64,${logo.toString("base64")}`}
-          width={size * (maskable ? 0.74 : 0.94)}
-          height={size * (maskable ? 0.74 : 0.94)}
+          width={size * (maskable ? 0.68 : 0.86)}
+          height={size * (maskable ? 0.68 : 0.86)}
           alt=""
           style={{ objectFit: "contain" }}
         />
