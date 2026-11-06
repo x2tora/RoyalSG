@@ -1456,3 +1456,22 @@ dialog[data-closing="true"]::backdrop {
   --md-filled-button-pressed-label-text-color: var(--md-sys-color-on-error);
   --md-filled-button-pressed-state-layer-color: var(--md-sys-color-on-error);
 }
+
+.rental-paused {
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 16px;
+  background: var(--md-sys-color-surface-container);
+}
+.rental-paused h2 {
+  font-size: 20px;
+  font-weight: 500;
+}
+.rental-paused p {
+  margin: 8px 0 12px;
+  line-height: 1.7;
+}
+.rental-paused a {
+  color: var(--md-sys-color-primary);
+}

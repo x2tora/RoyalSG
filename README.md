@@ -1,5 +1,9 @@
 # 로얄상구 기기 예약
 
+> **대여 시스템 잠정 중단:** 현재 실제 예약을 받지 않습니다. 화면과 API에서 신규 신청을 차단하고, DB의 `private.create_booking`도 신규 예약을 거절합니다. 기존 기록 조회·회원 관리·문의는 유지합니다.
+
+재개 시에는 UI/API의 `RENTAL_PAUSED`뿐 아니라 신규 마이그레이션으로 DB 예약 생성 함수도 복원해야 합니다.
+
 Next.js 16 · React 19 · TypeScript · Material Web · Supabase.
 
 ## 로컬 실행

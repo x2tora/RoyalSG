@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { configured, supabase } from "@/lib/supabase";
-import { POLICY_VERSION } from "@/lib/rules";
+import {
+  POLICY_VERSION,
+  RENTAL_PAUSED,
+  RENTAL_PAUSED_MESSAGE,
+} from "@/lib/rules";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
@@ -81,6 +85,11 @@ export async function POST(request: NextRequest) {
   try {
     const db = await supabase(),
       body = await request.json();
+    if (body.action === "book" && RENTAL_PAUSED)
+      return NextResponse.json(
+        { error: RENTAL_PAUSED_MESSAGE },
+        { status: 409 },
+      );
     const {
       data: { user },
     } = await db.auth.getUser();
