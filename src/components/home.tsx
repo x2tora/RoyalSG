@@ -12,8 +12,6 @@ import {
   addDays,
   blocksDeletion,
   CONTACT,
-  RENTAL_PAUSED,
-  RENTAL_PAUSED_MESSAGE,
   endsAt,
   phoneFormat,
   available,
@@ -323,15 +321,13 @@ export default function Home({
           }
         }}
       >
-        {RENTAL_PAUSED ? (
-          <aside className="rental-paused" aria-label="대여 운영 안내">
-            <h2>대여 잠정 중단</h2>
-            <p>{RENTAL_PAUSED_MESSAGE}</p>
-            <a href={CONTACT} target="_blank" rel="noreferrer">
-              관련 문의
-            </a>
-          </aside>
-        ) : null}
+        <aside className="rental-paused" aria-label="대여 운영 안내">
+          <h2>대여 잠정 중단</h2>
+          <p>대여 시스템이 잠정 중단되어 현재 실제 예약을 받지 않습니다.</p>
+          <a href={CONTACT} target="_blank" rel="noreferrer">
+            관련 문의
+          </a>
+        </aside>
         {error ? (
           <div className="notice error" role="alert">
             {error}
@@ -507,10 +503,10 @@ export default function Home({
                   ) : null}
                   <div className="actions">
                     <Md
-                      disabled={RENTAL_PAUSED || busy || !!active}
+                      disabled={busy || !!active}
                       onClick={() => navigate("book")}
                     >
-                      {RENTAL_PAUSED ? "대여 예약 중단" : "기기 예약"}
+                      기기 예약
                     </Md>
                     <Md
                       kind="outlined-button"
@@ -562,8 +558,7 @@ export default function Home({
                 뒤로가기
               </Md>
             </div>
-            {!RENTAL_PAUSED &&
-            selected &&
+            {selected &&
             data &&
             user?.profile &&
             (active ||
@@ -579,15 +574,11 @@ export default function Home({
               slots={data?.slots ?? []}
               now={now}
               readonly={
-                RENTAL_PAUSED ||
-                pane === "calendar" ||
-                !user ||
-                !!active ||
-                !data?.configured
+                pane === "calendar" || !user || !!active || !data?.configured
               }
               onSelect={(date) => router.push(`/reserve/${date}`)}
             />
-            {!RENTAL_PAUSED && pane === "calendar" && user ? (
+            {pane === "calendar" && user ? (
               <Md disabled={!!active} onClick={() => navigate("book")}>
                 기기 예약하기
               </Md>
@@ -636,8 +627,7 @@ export default function Home({
           </p>
         </footer>
       </div>
-      {!RENTAL_PAUSED &&
-      selected &&
+      {selected &&
       data &&
       user?.profile &&
       !active &&

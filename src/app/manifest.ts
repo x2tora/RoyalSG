@@ -6,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
     id: "/",
     name: "로얄상구 기기 예약 서비스",
     short_name: "로얄상구",
-    description: "대여 잠정 중단 · 현재 실제 예약을 받지 않습니다.",
+    description: "로얄상구 기기 대여 예약과 일정 조회",
     lang: "ko",
     start_url: "/",
     scope: "/",

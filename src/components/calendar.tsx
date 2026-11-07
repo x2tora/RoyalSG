@@ -1,15 +1,7 @@
 "use client";
 import { Md } from "./material";
 import { useEffect, useRef, useState } from "react";
-import {
-  addDays,
-  available,
-  dateKey,
-  windowFor,
-  RENTAL_PAUSED,
-  RENTAL_PAUSED_MESSAGE,
-  type Slot,
-} from "@/lib/rules";
+import { addDays, available, dateKey, windowFor, type Slot } from "@/lib/rules";
 export default function Calendar({
   slots,
   now,
@@ -141,7 +133,7 @@ export default function Calendar({
               {Array.from({ length: count }, (_, i) => {
                 const day = addDays(monthStart, i),
                   slot = slots.find((s) => s.rental_date === day),
-                  can = !RENTAL_PAUSED && available(day, now) && !slot;
+                  can = available(day, now) && !slot;
                 const state =
                   slot?.status === "pending"
                     ? "pending"
@@ -183,39 +175,25 @@ export default function Calendar({
       <div className="legend" aria-label="캘린더 상태 안내">
         {[
           ["available", "예약 가능", "예약 가능한 날짜입니다."],
-          [
-            "restricted",
-            "예약 제한",
-            RENTAL_PAUSED
-              ? "대여 잠정 중단으로 신청할 수 없습니다."
-              : "운영일·신청 범위 외 날짜입니다.",
-          ],
+          ["restricted", "예약 제한", "운영일·신청 범위 외 날짜입니다."],
           ["pending", "대기", "승인 대기 상태입니다."],
           ["confirmed", "확정", "승인 완료 상태입니다."],
-        ]
-          .filter(([state]) => !RENTAL_PAUSED || state !== "available")
-          .map(([state, title, description]) => (
-            <div className={`legend-item ${state}`} key={state}>
-              <span className="legend-swatch" aria-hidden="true" />
-              <div>
-                <strong>{title}</strong>
-                <p>{description}</p>
-              </div>
+        ].map(([state, title, description]) => (
+          <div className={`legend-item ${state}`} key={state}>
+            <span className="legend-swatch" aria-hidden="true" />
+            <div>
+              <strong>{title}</strong>
+              <p>{description}</p>
             </div>
-          ))}
+          </div>
+        ))}
       </div>
       <p className="caption">
         {readonly
           ? "일정 조회 전용입니다."
           : "날짜를 선택해 기체와 인원을 정해 주세요."}
         <br />
-        {RENTAL_PAUSED ? (
-          RENTAL_PAUSED_MESSAGE
-        ) : (
-          <>
-            예약 가능 범위 {range.min} ~ {range.max} · 매일 21시 갱신
-          </>
-        )}
+        예약 가능 범위 {range.min} ~ {range.max} · 매일 21시 갱신
       </p>
     </section>
   );

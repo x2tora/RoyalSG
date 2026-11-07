@@ -1460,9 +1460,10 @@ dialog[data-closing="true"]::backdrop {
 .rental-paused {
   padding: 20px 24px;
   margin-bottom: 24px;
-  border: 1px solid var(--md-sys-color-outline-variant);
+  border: 1px solid var(--md-sys-color-error);
   border-radius: 16px;
-  background: var(--md-sys-color-surface-container);
+  background: var(--md-sys-color-error-container);
+  color: var(--md-sys-color-on-error-container);
 }
 .rental-paused h2 {
   font-size: 20px;
@@ -1473,5 +1474,6 @@ dialog[data-closing="true"]::backdrop {
   line-height: 1.7;
 }
 .rental-paused a {
-  color: var(--md-sys-color-primary);
+  color: inherit;
+  font-weight: 600;
 }

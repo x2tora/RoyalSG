@@ -1,7 +1,4 @@
 export const CONTACT = "https://open.kakao.com/o/sB03cxii";
-export const RENTAL_PAUSED = true;
-export const RENTAL_PAUSED_MESSAGE =
-  "대여 시스템이 잠정 중단되어 현재 실제 예약을 받지 않습니다.";
 export const POLICY_VERSION = "2026-11-05";
 export const DELETION_BLOCKED =
   "이용일 5일 전이 지나 회원탈퇴가 제한됩니다. 예약 관련 사항은 운영자에게 문의해 주세요.";
