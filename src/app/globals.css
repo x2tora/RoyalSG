@@ -1478,12 +1478,29 @@ dialog[data-closing="true"]::backdrop {
   font-weight: 600;
 }
 .success-notice {
+  position: fixed;
+  z-index: 20;
+  bottom: max(24px, env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: min(560px, calc(100vw - 40px));
+  pointer-events: none;
   padding: 16px 20px;
-  margin-bottom: 20px;
+  margin: 0;
   border-radius: 16px;
   background: var(--md-sys-color-primary-container);
   color: var(--md-sys-color-on-primary-container);
   animation: surface-enter 220ms ease-out both;
+}
+.field-message {
+  min-height: 1.8em;
+  margin: 0;
+  color: var(--md-sys-color-error);
+}
+.agreement-status {
+  min-height: 3.6em;
+  margin: 0;
 }
 .booking-highlight {
   animation: booking-highlight 1800ms ease-out;
@@ -1496,7 +1513,4 @@ dialog[data-closing="true"]::backdrop {
   to {
     box-shadow: 0 0 0 0 transparent;
   }
-}
-.booking-processing-out {
-  animation: surface-exit 250ms ease-in 1550ms forwards;
 }

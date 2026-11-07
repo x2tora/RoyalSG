@@ -3,6 +3,7 @@
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type FormEvent,
@@ -439,6 +440,7 @@ export default function Home({
               <TextField
                 label="이름 또는 닉네임"
                 data-profile-field="name"
+                supporting-text=" "
                 error={!!profileErrors.name}
                 error-text={profileErrors.name}
                 required
@@ -450,6 +452,7 @@ export default function Home({
               <TextField
                 label="연락처"
                 data-profile-field="phone"
+                supporting-text=" "
                 error={!!profileErrors.phone}
                 error-text={profileErrors.phone}
                 required
@@ -476,9 +479,9 @@ export default function Home({
                   </span>
                 </label>
               ) : null}
-              {profileErrors.consent ? (
-                <p className="error" role="alert">
-                  {profileErrors.consent}
+              {signup ? (
+                <p className="field-message" role="alert">
+                  {profileErrors.consent ?? "\u00a0"}
                 </p>
               ) : null}
               <Md type="submit" disabled={busy}>
@@ -941,6 +944,37 @@ function Admin({
   );
   const [showHistory, setShowHistory] = useState(false);
   const [processedId, setProcessedId] = useState<string | null>(null);
+  const adminRef = useRef<HTMLElement>(null);
+  useLayoutEffect(() => {
+    const card = adminRef.current?.querySelector<HTMLElement>(
+      ".booking-processing-out",
+    );
+    if (
+      !card ||
+      matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      document.documentElement.dataset.lowVision === "true"
+    )
+      return;
+    const animation = card.animate(
+      [
+        { height: `${card.getBoundingClientRect().height}px`, opacity: 1 },
+        {
+          height: "0px",
+          opacity: 0,
+          paddingTop: "0px",
+          paddingBottom: "0px",
+          marginTop: "0px",
+          marginBottom: "0px",
+        },
+      ],
+      { delay: 1500, duration: 300, easing: "ease", fill: "forwards" },
+    );
+    card.style.overflow = "hidden";
+    return () => {
+      animation.cancel();
+      card.style.removeProperty("overflow");
+    };
+  }, [processedId]);
   useEffect(() => {
     if (!processedId) return;
     const timer = setTimeout(() => setProcessedId(null), 1800);
@@ -969,7 +1003,7 @@ function Admin({
     );
   }
   return (
-    <section>
+    <section ref={adminRef}>
       <div className="section-heading">
         <h2>예약 관리</h2>
         <Md kind="text-button" onClick={back}>

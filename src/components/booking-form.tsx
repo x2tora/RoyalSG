@@ -197,14 +197,13 @@ export default function BookingForm({
             </a>
           </div>
         </details>
-        {selectionChanged && !allAgreed ? (
-          <p className="caption" role="status">
-            선택이 변경되어 이용 안내를 다시 확인해 주세요.
-          </p>
-        ) : null}
-        {!allAgreed ? (
-          <p className="caption">이용 안내를 펼쳐 모든 항목에 동의해 주세요.</p>
-        ) : null}
+        <p className="caption agreement-status" role="status">
+          {allAgreed
+            ? "모든 이용 안내에 동의했습니다."
+            : selectionChanged
+              ? "선택이 변경되어 이용 안내를 다시 확인해 주세요."
+              : "이용 안내를 펼쳐 모든 항목에 동의해 주세요."}
+        </p>
         {error ? (
           <p role="alert" className="error">
             {error}
