@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { addDays, CONTACT } from "@/lib/rules";
 import { Md, Select, Checkbox } from "./material";
 
@@ -17,6 +17,10 @@ export default function BookingForm({
   const [machine, setMachine] = useState("A");
   const [people, setPeople] = useState(1);
   const toggling = useRef(false);
+  const agreementsRef = useRef<HTMLDetailsElement>(null);
+  const autoCloseTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
   const [agreed, setAgreed] = useState<boolean[]>([
     false,
     false,
@@ -48,6 +52,18 @@ export default function BookingForm({
     },
   ];
   const allAgreed = agreed.every(Boolean);
+  useEffect(() => {
+    if (!allAgreed) return;
+    autoCloseTimer.current = setTimeout(() => {
+      const details = agreementsRef.current;
+      if (!details?.open) return;
+      const summary = details.querySelector("summary");
+      if (details.contains(document.activeElement))
+        summary?.focus({ preventScroll: true });
+      summary?.click();
+    }, 400);
+    return () => clearTimeout(autoCloseTimer.current);
+  }, [allAgreed]);
   return (
     <>
       <p className="date-display">{date}</p>
@@ -84,10 +100,11 @@ export default function BookingForm({
             { value: "2", label: "2인 · 35,000원" },
           ]}
         />
-        <details className="booking-agreements">
+        <details className="booking-agreements" ref={agreementsRef}>
           <summary
             onClick={async (event) => {
               event.preventDefault();
+              clearTimeout(autoCloseTimer.current);
               if (toggling.current) return;
               const details = event.currentTarget
                 .parentElement as HTMLDetailsElement;
@@ -136,7 +153,7 @@ export default function BookingForm({
               toggling.current = false;
             }}
           >
-            이용 안내 확인 및 동의{" "}
+            {allAgreed ? "이용 안내 동의 완료" : "이용 안내 확인 및 동의"}{" "}
             <span>
               {agreed.filter(Boolean).length}/{items.length}
             </span>
