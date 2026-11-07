@@ -17,6 +17,7 @@ export default function BookingForm({
   const [machine, setMachine] = useState("A");
   const [people, setPeople] = useState(1);
   const toggling = useRef(false);
+  const [selectionChanged, setSelectionChanged] = useState(false);
   const agreementsRef = useRef<HTMLDetailsElement>(null);
   const autoCloseTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
@@ -52,6 +53,13 @@ export default function BookingForm({
     },
   ];
   const allAgreed = agreed.every(Boolean);
+  function resetAgreements() {
+    setAgreed(agreed.map(() => false));
+    setSelectionChanged(true);
+    clearTimeout(autoCloseTimer.current);
+    const details = agreementsRef.current;
+    if (details && !details.open) details.querySelector("summary")?.click();
+  }
   useEffect(() => {
     if (!allAgreed) return;
     autoCloseTimer.current = setTimeout(() => {
@@ -80,7 +88,7 @@ export default function BookingForm({
           disabled={busy}
           onValue={(value) => {
             setMachine(value);
-            setAgreed(agreed.map(() => false));
+            resetAgreements();
           }}
           options={["A", "B", "C"].map((value) => ({
             value,
@@ -93,7 +101,7 @@ export default function BookingForm({
           disabled={busy}
           onValue={(value) => {
             setPeople(Number(value));
-            setAgreed(agreed.map(() => false));
+            resetAgreements();
           }}
           options={[
             { value: "1", label: "1인 · 25,000원" },
@@ -189,6 +197,11 @@ export default function BookingForm({
             </a>
           </div>
         </details>
+        {selectionChanged && !allAgreed ? (
+          <p className="caption" role="status">
+            선택이 변경되어 이용 안내를 다시 확인해 주세요.
+          </p>
+        ) : null}
         {!allAgreed ? (
           <p className="caption">이용 안내를 펼쳐 모든 항목에 동의해 주세요.</p>
         ) : null}
@@ -198,7 +211,7 @@ export default function BookingForm({
           </p>
         ) : null}
         <Md type="submit" disabled={busy || !allAgreed}>
-          예약 신청
+          {busy ? "신청 중…" : "예약 신청"}
         </Md>
       </form>
     </>

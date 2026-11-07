@@ -125,6 +125,31 @@ export default function Home({
   children?: ReactNode;
 }) {
   const router = useRouter();
+  const [notice, setNotice] = useState("");
+  const [profileErrors, setProfileErrors] = useState<{
+    name?: string;
+    phone?: string;
+    consent?: string;
+  }>({});
+  const selectedDate = useRef<string | null>(null);
+  useEffect(() => {
+    if (reservationDate) selectedDate.current = reservationDate;
+    else if (pane === "book" && selectedDate.current) {
+      const frame = requestAnimationFrame(() => {
+        document
+          .querySelector<HTMLElement>(
+            `[data-calendar-date="${selectedDate.current}"]`,
+          )
+          ?.focus({ preventScroll: true });
+      });
+      return () => cancelAnimationFrame(frame);
+    }
+  }, [reservationDate, pane]);
+  useEffect(() => {
+    if (!notice) return;
+    const timer = setTimeout(() => setNotice(""), 5000);
+    return () => clearTimeout(timer);
+  }, [notice]);
   const [data, setData] = useState<State | null>(null),
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false),
@@ -254,6 +279,14 @@ export default function Home({
         return;
       }
       await refresh();
+      const messages: Record<string, string> = {
+        profile: "저장했습니다.",
+        book: "승인 대기 상태로 접수됐습니다.",
+        cancelBooking: "예약을 취소했습니다.",
+        review: "예약 처리가 완료됐습니다.",
+        block: "운영일 설정을 저장했습니다.",
+      };
+      if (messages[action]) setNotice(messages[action]);
       after?.();
     } catch (e) {
       setError(e instanceof Error ? e.message : "요청에 실패했습니다.");
@@ -283,7 +316,33 @@ export default function Home({
   };
   function profileSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    void run("profile", { name, phone, consent }, () => navigate("home", true));
+    const errors = {
+      name:
+        name.trim().length < 1 || name.trim().length > 30
+          ? "이름을 1~30자로 입력해 주세요."
+          : undefined,
+      phone: !/^010-[0-9]{4}-[0-9]{4}$/.test(phone)
+        ? "010으로 시작하는 전화번호 11자리를 입력해 주세요."
+        : undefined,
+      consent:
+        signup && !consent ? "개인정보 처리방침에 동의해 주세요." : undefined,
+    };
+    setProfileErrors(errors);
+    if (errors.name || errors.phone || errors.consent) {
+      document
+        .querySelector<HTMLElement>(
+          errors.name
+            ? '[data-profile-field="name"]'
+            : errors.phone
+              ? '[data-profile-field="phone"]'
+              : "[data-profile-consent]",
+        )
+        ?.focus();
+      return;
+    }
+    void run("profile", { name, phone, consent }, () => {
+      if (signup) navigate("home", true);
+    });
   }
   return (
     <main
@@ -321,6 +380,11 @@ export default function Home({
           }
         }}
       >
+        {notice ? (
+          <p className="success-notice" role="status">
+            {notice}
+          </p>
+        ) : null}
         <aside className="rental-paused" aria-label="대여 운영 안내">
           <h2>대여 잠정 중단</h2>
           <p>대여 시스템이 잠정 중단되어 현재 실제 예약을 받지 않습니다.</p>
@@ -371,9 +435,12 @@ export default function Home({
             <p>
               {user?.profile?.name ?? "예약에 사용할 정보를 입력해 주세요."}
             </p>
-            <form onSubmit={profileSubmit}>
+            <form onSubmit={profileSubmit} noValidate>
               <TextField
                 label="이름 또는 닉네임"
+                data-profile-field="name"
+                error={!!profileErrors.name}
+                error-text={profileErrors.name}
                 required
                 maxLength={30}
                 autoComplete="nickname"
@@ -382,6 +449,9 @@ export default function Home({
               />
               <TextField
                 label="연락처"
+                data-profile-field="phone"
+                error={!!profileErrors.phone}
+                error-text={profileErrors.phone}
                 required
                 type="tel"
                 inputMode="numeric"
@@ -395,6 +465,7 @@ export default function Home({
                 <label className="check">
                   <Checkbox
                     label="개인정보 처리방침 동의 (필수)"
+                    data-profile-consent
                     required
                     checked={consent}
                     onChecked={setConsent}
@@ -405,8 +476,17 @@ export default function Home({
                   </span>
                 </label>
               ) : null}
+              {profileErrors.consent ? (
+                <p className="error" role="alert">
+                  {profileErrors.consent}
+                </p>
+              ) : null}
               <Md type="submit" disabled={busy}>
-                {signup ? "동의하고 시작하기" : "변경사항 저장"}
+                {busy
+                  ? "저장 중…"
+                  : signup
+                    ? "동의하고 시작하기"
+                    : "변경사항 저장"}
               </Md>
             </form>
             {signup ? (
@@ -486,7 +566,15 @@ export default function Home({
                       </Md>
                     ) : null}
                   </div>
-                  {active ? <BookingCard booking={active} /> : null}
+                  {active ? (
+                    <div
+                      className={
+                        notice.includes("접수") ? "booking-highlight" : ""
+                      }
+                    >
+                      <BookingCard booking={active} />
+                    </div>
+                  ) : null}
                   {active?.status === "pending" ? (
                     <Md
                       className="pending-cancel"
@@ -498,7 +586,7 @@ export default function Home({
                         setCancellingBooking(active);
                       }}
                     >
-                      예약 취소
+                      {busy ? "취소 중…" : "예약 취소"}
                     </Md>
                   ) : null}
                   <div className="actions">
@@ -534,7 +622,7 @@ export default function Home({
                     >
                       <Md kind="ripple" disabled={busy || !data?.configured} />
                       <GoogleIcon />
-                      Google로 로그인
+                      {busy ? "Google 연결 중…" : "Google로 로그인"}
                     </button>
                     <Md
                       kind="outlined-button"
@@ -679,7 +767,7 @@ export default function Home({
                 )
               }
             >
-              예약 취소
+              {busy ? "취소 중…" : "예약 취소"}
             </Md>
           </div>
         </Modal>
@@ -852,6 +940,13 @@ function Admin({
     null,
   );
   const [showHistory, setShowHistory] = useState(false);
+  const [processedId, setProcessedId] = useState<string | null>(null);
+  useEffect(() => {
+    if (!processedId) return;
+    const timer = setTimeout(() => setProcessedId(null), 1800);
+    return () => clearTimeout(timer);
+  }, [processedId]);
+
   const bookings =
     data?.bookings.filter((b) => {
       const current =
@@ -859,6 +954,15 @@ function Admin({
         endsAt(b.rental_date) > now;
       return showHistory ? !current : current;
     }) ?? [];
+  const processedBooking = data?.bookings.find(
+    (booking) => booking.id === processedId,
+  );
+  if (
+    !showHistory &&
+    processedBooking &&
+    !bookings.some((booking) => booking.id === processedId)
+  )
+    bookings.push(processedBooking);
   if (showHistory) {
     bookings.sort((a, b) =>
       (b.created_at ?? "").localeCompare(a.created_at ?? ""),
@@ -908,7 +1012,10 @@ function Admin({
       <h3>{showHistory ? "이전 예약 내역" : "현재 예약"}</h3>
       {bookings.length ? (
         bookings.map((b) => (
-          <div className="card" key={b.id}>
+          <div
+            className={`card ${b.id === processedId ? (["cancelled", "rejected"].includes(b.status) && !showHistory ? "booking-processing-out" : "booking-highlight") : ""}`}
+            key={b.id}
+          >
             <BookingCard booking={b} />
             <p>
               {b.name ?? "탈퇴/보유기간 종료"}{" "}
@@ -984,9 +1091,14 @@ function Admin({
           </p>
           <Md
             disabled={busy}
-            onClick={() => void run("review", review, () => setReview(null))}
+            onClick={() =>
+              void run("review", review, () => {
+                setProcessedId(review.id);
+                setReview(null);
+              })
+            }
           >
-            확인
+            {busy ? "처리 중…" : "확인"}
           </Md>
         </Modal>
       ) : null}

@@ -154,6 +154,7 @@ export default function Calendar({
                 return (
                   <button
                     key={day}
+                    data-calendar-date={day}
                     className={`day ${state} ${day === range.today ? "today" : ""}`}
                     disabled={readonly || !can}
                     aria-label={`${day} ${status}${detail ? ` ${detail}` : ""}`}

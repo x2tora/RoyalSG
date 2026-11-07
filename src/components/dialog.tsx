@@ -42,8 +42,13 @@ export default function Modal({
   }
   useLayoutEffect(() => {
     const dialog = ref.current;
+    const previous = document.activeElement;
     dialog?.showModal();
-    return () => dialog?.close();
+    return () => {
+      dialog?.close();
+      if (previous instanceof HTMLElement && previous.isConnected)
+        previous.focus({ preventScroll: true });
+    };
   }, []);
   return (
     <dialog

@@ -79,6 +79,18 @@ export function Select({
 }) {
   const ref = useRef<HTMLElement & { value: string }>(null);
   useEffect(() => {
+    const closeOnScroll = (event: Event) => {
+      const select = ref.current;
+      if (select && !event.composedPath().includes(select))
+        (
+          select.shadowRoot?.querySelector("md-menu") as
+            (HTMLElement & { close: () => void }) | null
+        )?.close();
+    };
+    document.addEventListener("scroll", closeOnScroll, true);
+    return () => document.removeEventListener("scroll", closeOnScroll, true);
+  }, []);
+  useEffect(() => {
     let active = true;
     void customElements.whenDefined("md-outlined-select").then(() => {
       if (active && ref.current) ref.current.value = value;

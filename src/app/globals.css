@@ -1477,3 +1477,26 @@ dialog[data-closing="true"]::backdrop {
   color: inherit;
   font-weight: 600;
 }
+.success-notice {
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  border-radius: 16px;
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  animation: surface-enter 220ms ease-out both;
+}
+.booking-highlight {
+  animation: booking-highlight 1800ms ease-out;
+  border-radius: 12px;
+}
+@keyframes booking-highlight {
+  from {
+    box-shadow: 0 0 0 3px var(--md-sys-color-primary);
+  }
+  to {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+.booking-processing-out {
+  animation: surface-exit 250ms ease-in 1550ms forwards;
+}
