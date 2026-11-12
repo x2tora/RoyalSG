@@ -165,6 +165,7 @@ export default function BookingForm({
             <span>
               {agreed.filter(Boolean).length}/{items.length}
             </span>
+            <Md kind="ripple" />
           </summary>
           <div className="agreement-list" style={{ animation: "none" }}>
             {items.map((item, index) => (

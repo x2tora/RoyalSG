@@ -538,15 +538,22 @@ footer p span {
 .booking-agreements {
   border: 1px solid var(--md-sys-color-outline-variant);
   border-radius: 16px;
+  transition:
+    border-color 200ms ease,
+    background-color 200ms ease;
 }
 .booking-agreements summary {
+  position: relative;
+  overflow: hidden;
   display: flex;
   justify-content: space-between;
   gap: 12px;
   padding: 16px;
+  border-radius: 16px;
   cursor: pointer;
   list-style: none;
   font-size: 14px;
+  transition: background-color 180ms ease;
 }
 .booking-agreements summary > span {
   color: var(--md-sys-color-primary);
@@ -620,7 +627,16 @@ select {
   color: var(--md-sys-color-on-surface);
   border-radius: 4px;
   min-height: 56px;
-  padding: 12px;
+  padding: 0 16px;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+input:not([type="checkbox"]):focus,
+select:focus {
+  outline: none;
+  border-color: var(--md-sys-color-primary);
+  box-shadow: inset 0 0 0 1px var(--md-sys-color-primary);
 }
 select option {
   color: var(--md-sys-color-on-surface);
@@ -885,7 +901,7 @@ dialog > p {
 .content > .guide,
 .content > footer,
 .privacy {
-  animation: surface-enter 650ms cubic-bezier(0.42, 0, 1, 1) both;
+  animation: surface-enter 280ms cubic-bezier(0.2, 0, 0, 1) both;
 }
 .intro-play .content > section,
 .intro-play .content > .guide,
@@ -897,10 +913,7 @@ dialog > p {
 .history .booking-card,
 .welcome > .booking-card,
 .calendar-title h2 {
-  animation: surface-enter 600ms cubic-bezier(0.42, 0, 1, 1) both;
-}
-dialog[open] {
-  animation: dialog-enter 550ms cubic-bezier(0.42, 0, 1, 1) both;
+  animation: surface-enter 260ms cubic-bezier(0.2, 0, 0, 1) both;
 }
 @keyframes surface-enter {
   0% {
@@ -1161,10 +1174,20 @@ md-outlined-icon-button:not(:defined) {
 
 /* Entry and exit effects change opacity only. */
 .notice,
+.error,
+.install-app,
+.admin-bookings,
+.delete-warning,
 .booking-times,
 .agreement-list,
 .block-row {
-  animation: surface-enter 260ms ease-out both;
+  animation: surface-enter 240ms cubic-bezier(0.2, 0, 0, 1) both;
+}
+.field-message,
+.agreement-status {
+  transition:
+    opacity 180ms ease,
+    color 180ms ease;
 }
 .card,
 .booking-card,
@@ -1225,7 +1248,7 @@ footer a,
   animation-delay: 105ms;
 }
 dialog[open] {
-  animation: dialog-enter 240ms ease-out both;
+  animation: dialog-enter 220ms cubic-bezier(0.2, 0, 0, 1) both;
 }
 dialog[open]::backdrop {
   animation: surface-enter 240ms ease-out both;
@@ -1247,6 +1270,16 @@ dialog[data-closing="true"]::backdrop {
   footer a:hover {
     color: var(--md-sys-color-primary);
   }
+  .day.available:hover {
+    border-color: var(--md-sys-color-primary);
+  }
+  .booking-agreements summary:hover {
+    background: var(--md-sys-color-surface-container-low);
+  }
+  input:not([type="checkbox"]):hover,
+  select:hover {
+    border-color: var(--md-sys-color-on-surface);
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -1266,9 +1299,9 @@ dialog[data-closing="true"]::backdrop {
   will-change: opacity;
 }
 
-.intro-done .content > section,
-.intro-done .content > .guide,
-.intro-done .content > footer {
+.intro-done:not(.pane-animated) .content > section,
+.intro-done:not(.pane-animated) .content > .guide,
+.intro-done:not(.pane-animated) .content > footer {
   animation: none;
 }
 

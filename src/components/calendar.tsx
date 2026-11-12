@@ -35,9 +35,11 @@ export default function Calendar({
     const element = viewport.current;
     element?.scrollTo({
       left: element.clientWidth * (next + 1),
-      behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
-        ? "instant"
-        : "smooth",
+      behavior:
+        matchMedia("(prefers-reduced-motion: reduce)").matches ||
+        document.documentElement.dataset.lowVision === "true"
+          ? "instant"
+          : "smooth",
     });
   }
   const first = new Date(range.today.slice(0, 7) + "-01T00:00:00Z");

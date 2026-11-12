@@ -164,6 +164,11 @@ export default function Home({
     [name, setName] = useState(""),
     [consent, setConsent] = useState(false),
     [clock, setClock] = useState<Date | null>(null);
+  const [paneAnimated, setPaneAnimated] = useState(false);
+  const initialPane = useRef(pane);
+  useEffect(() => {
+    if (pane !== initialPane.current) setPaneAnimated(true);
+  }, [pane]);
   const serverClock = useRef({ time: 0, received: 0 });
   const profileInitialized = useRef(false);
   const refreshing = useRef(false);
@@ -347,7 +352,7 @@ export default function Home({
   }
   return (
     <main
-      className={`shell ${pane !== "home" ? "compact-header" : ""} intro-${intro}`}
+      className={`shell ${pane !== "home" ? "compact-header" : ""} intro-${intro}${paneAnimated ? " pane-animated" : ""}`}
     >
       <MaterialLoader />
       <header className="topbar">
@@ -412,7 +417,7 @@ export default function Home({
         ) : null}
         {(signup && pane === "signup") ||
         (pane === "profile" && user?.profile) ? (
-          <section className="card">
+          <section className="card" key={signup ? "signup" : "profile"}>
             <div className="section-heading">
               <div>
                 <h2>{signup ? "회원가입" : "마이페이지"}</h2>
@@ -530,7 +535,7 @@ export default function Home({
         ) : null}
         {!signup && pane === "home" ? (
           <>
-            <section className="welcome">
+            <section className="welcome" key="welcome">
               {user ? (
                 <>
                   <div className="profile">
@@ -605,14 +610,15 @@ export default function Home({
                     >
                       예약 조회
                     </Md>
-                    <a
+                    <Md
+                      kind="text-button"
                       className="contact-link"
                       href={CONTACT}
                       target="_blank"
                       rel="noreferrer"
                     >
                       1:1 문의
-                    </a>
+                    </Md>
                   </div>
                 </>
               ) : (
@@ -1044,77 +1050,82 @@ function Admin({
         {showHistory ? "현재 예약 보기" : "이전 내역 보기"}
       </Md>
       <h3>{showHistory ? "이전 예약 내역" : "현재 예약"}</h3>
-      {bookings.length ? (
-        bookings.map((b) => (
-          <div
-            className={`card ${b.id === processedId ? (["cancelled", "rejected"].includes(b.status) && !showHistory ? "booking-processing-out" : "booking-highlight") : ""}`}
-            key={b.id}
-          >
-            <BookingCard booking={b} />
-            <p>
-              {b.name ?? "탈퇴/보유기간 종료"}{" "}
-              {b.phone ? <a href={"tel:" + b.phone}>{b.phone}</a> : null}
-            </p>
-            <dl className="booking-times">
-              {[
-                ["신청", b.created_at],
-                ["승인", b.confirmed_at],
-                [b.cancelled_by_self ? "본인 취소" : "취소", b.cancelled_at],
-                ["거절", b.rejected_at],
-              ].map(([label, value]) => (
-                <div key={label}>
-                  <dt>{label}</dt>
-                  <dd>
-                    {value
-                      ? new Intl.DateTimeFormat("ko-KR", {
-                          timeZone: "Asia/Seoul",
-                          dateStyle: "medium",
-                          timeStyle: "short",
-                          hour12: false,
-                        }).format(new Date(value))
-                      : "기록 없음"}
-                  </dd>
+      <div
+        key={showHistory ? "history" : "current"}
+        className="admin-bookings"
+      >
+        {bookings.length ? (
+          bookings.map((b) => (
+            <div
+              className={`card ${b.id === processedId ? (["cancelled", "rejected"].includes(b.status) && !showHistory ? "booking-processing-out" : "booking-highlight") : ""}`}
+              key={b.id}
+            >
+              <BookingCard booking={b} />
+              <p>
+                {b.name ?? "탈퇴/보유기간 종료"}{" "}
+                {b.phone ? <a href={"tel:" + b.phone}>{b.phone}</a> : null}
+              </p>
+              <dl className="booking-times">
+                {[
+                  ["신청", b.created_at],
+                  ["승인", b.confirmed_at],
+                  [b.cancelled_by_self ? "본인 취소" : "취소", b.cancelled_at],
+                  ["거절", b.rejected_at],
+                ].map(([label, value]) => (
+                  <div key={label}>
+                    <dt>{label}</dt>
+                    <dd>
+                      {value
+                        ? new Intl.DateTimeFormat("ko-KR", {
+                            timeZone: "Asia/Seoul",
+                            dateStyle: "medium",
+                            timeStyle: "short",
+                            hour12: false,
+                          }).format(new Date(value))
+                        : "기록 없음"}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+              {["pending", "confirmed"].includes(b.status) &&
+              endsAt(b.rental_date) > now ? (
+                <div className="review-actions">
+                  {b.status === "pending" ? (
+                    <>
+                      <Md
+                        disabled={busy}
+                        onClick={() =>
+                          setReview({ id: b.id, status: "confirmed" })
+                        }
+                      >
+                        승인
+                      </Md>
+                      <Md
+                        kind="outlined-button"
+                        disabled={busy}
+                        onClick={() =>
+                          setReview({ id: b.id, status: "rejected" })
+                        }
+                      >
+                        거절
+                      </Md>
+                    </>
+                  ) : null}
+                  <Md
+                    kind="text-button"
+                    disabled={busy}
+                    onClick={() => setReview({ id: b.id, status: "cancelled" })}
+                  >
+                    문의 취소 처리
+                  </Md>
                 </div>
-              ))}
-            </dl>
-            {["pending", "confirmed"].includes(b.status) &&
-            endsAt(b.rental_date) > now ? (
-              <div className="review-actions">
-                {b.status === "pending" ? (
-                  <>
-                    <Md
-                      disabled={busy}
-                      onClick={() =>
-                        setReview({ id: b.id, status: "confirmed" })
-                      }
-                    >
-                      승인
-                    </Md>
-                    <Md
-                      kind="outlined-button"
-                      disabled={busy}
-                      onClick={() =>
-                        setReview({ id: b.id, status: "rejected" })
-                      }
-                    >
-                      거절
-                    </Md>
-                  </>
-                ) : null}
-                <Md
-                  kind="text-button"
-                  disabled={busy}
-                  onClick={() => setReview({ id: b.id, status: "cancelled" })}
-                >
-                  문의 취소 처리
-                </Md>
-              </div>
-            ) : null}
-          </div>
-        ))
-      ) : (
-        <p className="notice">예약 내역이 없습니다.</p>
-      )}
+              ) : null}
+            </div>
+          ))
+        ) : (
+          <p className="notice">예약 내역이 없습니다.</p>
+        )}
+      </div>
       {review ? (
         <Modal
           title={`예약 ${statusText[review.status]} 처리`}
