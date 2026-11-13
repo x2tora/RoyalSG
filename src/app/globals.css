@@ -824,11 +824,10 @@ dialog {
   max-height: 90dvh;
   overflow: auto;
   padding: 24px;
-  box-shadow: 0 20px 90px #0004;
+  box-shadow: 0 12px 36px #0003;
 }
 dialog::backdrop {
   background: #15101d88;
-  backdrop-filter: blur(4px);
 }
 .dialog-heading {
   display: flex;
