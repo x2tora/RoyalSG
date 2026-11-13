@@ -85,7 +85,7 @@ async function command(action: string, args: Record<string, unknown> = {}) {
 function Guide() {
   return (
     <section className="guide" aria-labelledby="guide-title">
-      <h2 id="guide-title">이용 전 꼭 확인해 주세요!</h2>
+      <h2 id="guide-title">이용 전 꼭 확인해 주세요</h2>
       <ul>
         <li>운영: 일·월·화·수·목 다음날 00:00~05:00</li>
         <li>예: 10월 9일 예약 → 10월 10일 00:00~05:00 이용 가능</li>
