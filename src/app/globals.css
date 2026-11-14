@@ -559,6 +559,10 @@ footer p span {
 .booking-agreements summary > span {
   color: var(--md-sys-color-primary);
 }
+.booking-agreements summary[aria-disabled="true"] {
+  cursor: default;
+  opacity: 0.6;
+}
 .agreement-list {
   display: grid;
   gap: 20px;

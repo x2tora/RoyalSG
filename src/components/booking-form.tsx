@@ -14,8 +14,8 @@ export default function BookingForm({
   error: string;
   onSubmit: (machine: string, people: number) => void;
 }) {
-  const [machine, setMachine] = useState("A");
-  const [people, setPeople] = useState(1);
+  const [machine, setMachine] = useState("");
+  const [people, setPeople] = useState("");
   const toggling = useRef(false);
   const [selectionChanged, setSelectionChanged] = useState(false);
   const agreementsRef = useRef<HTMLDetailsElement>(null);
@@ -29,6 +29,8 @@ export default function BookingForm({
     false,
     false,
   ]);
+  const ready = Boolean(machine && people);
+  const selectedPeople = Number(people);
   const items = [
     {
       title: "이용일 및 시간",
@@ -36,7 +38,9 @@ export default function BookingForm({
     },
     {
       title: "기체·인원 및 가격",
-      description: `${machine}기체 · ${people}인 · ${(people === 1 ? 25000 : 35000).toLocaleString()}원입니다.\n온라인 결제는 없으며, 결제 관련 사항은 운영자에게 문의해 주세요.`,
+      description: ready
+        ? `${machine}기체 · ${selectedPeople}인 · ${(selectedPeople === 1 ? 25000 : 35000).toLocaleString()}원입니다.\n온라인 결제는 없으며, 결제 관련 사항은 운영자에게 문의해 주세요.`
+        : "대여 기체와 이용 인원을 선택하면 요금이 표시됩니다.",
     },
     {
       title: "취소 제한",
@@ -52,13 +56,19 @@ export default function BookingForm({
         "관리자 승인 후 확정되며, 승인 대기 중에도 해당 날짜와 1인 1건 한도를 차지합니다.\n하루 한 기체를 FREE PLAY로 운영합니다.\n시범 운영 중으로 세부 내용이 변경될 수 있습니다.",
     },
   ];
-  const allAgreed = agreed.every(Boolean);
-  function resetAgreements() {
+  const allAgreed = ready && agreed.every(Boolean);
+  function handleSelectionChange(nextMachine: string, nextPeople: string) {
+    const nextReady = Boolean(nextMachine && nextPeople);
     setAgreed(agreed.map(() => false));
-    setSelectionChanged(true);
     clearTimeout(autoCloseTimer.current);
+    if (!nextReady) return;
+    if (ready) setSelectionChanged(true);
     const details = agreementsRef.current;
-    if (details && !details.open) details.querySelector("summary")?.click();
+    if (details && !details.open) {
+      requestAnimationFrame(() => {
+        if (!details.open) details.querySelector("summary")?.click();
+      });
+    }
   }
   useEffect(() => {
     if (!allAgreed) return;
@@ -79,7 +89,7 @@ export default function BookingForm({
       <form
         onSubmit={(event) => {
           event.preventDefault();
-          if (allAgreed && !busy) onSubmit(machine, people);
+          if (ready && allAgreed && !busy) onSubmit(machine, selectedPeople);
         }}
       >
         <Select
@@ -88,7 +98,7 @@ export default function BookingForm({
           disabled={busy}
           onValue={(value) => {
             setMachine(value);
-            resetAgreements();
+            handleSelectionChange(value, people);
           }}
           options={["A", "B", "C"].map((value) => ({
             value,
@@ -97,11 +107,11 @@ export default function BookingForm({
         />
         <Select
           label="이용 인원"
-          value={String(people)}
+          value={people}
           disabled={busy}
           onValue={(value) => {
-            setPeople(Number(value));
-            resetAgreements();
+            setPeople(value);
+            handleSelectionChange(machine, value);
           }}
           options={[
             { value: "1", label: "1인 · 25,000원" },
@@ -110,10 +120,11 @@ export default function BookingForm({
         />
         <details className="booking-agreements" ref={agreementsRef}>
           <summary
+            aria-disabled={!ready}
             onClick={async (event) => {
               event.preventDefault();
               clearTimeout(autoCloseTimer.current);
-              if (toggling.current) return;
+              if (!ready || toggling.current) return;
               const details = event.currentTarget
                 .parentElement as HTMLDetailsElement;
               const list =
@@ -199,18 +210,20 @@ export default function BookingForm({
           </div>
         </details>
         <p className="caption agreement-status" role="status">
-          {allAgreed
-            ? "모든 이용 안내에 동의했습니다."
-            : selectionChanged
-              ? "선택이 변경되어 이용 안내를 다시 확인해 주세요."
-              : "이용 안내를 펼쳐 모든 항목에 동의해 주세요."}
+          {!ready
+            ? "대여 기체와 이용 인원을 먼저 선택해 주세요."
+            : allAgreed
+              ? "모든 이용 안내에 동의했습니다."
+              : selectionChanged
+                ? "선택이 변경되어 이용 안내를 다시 확인해 주세요."
+                : "이용 안내의 모든 항목에 동의해 주세요."}
         </p>
         {error ? (
           <p role="alert" className="error">
             {error}
           </p>
         ) : null}
-        <Md type="submit" disabled={busy || !allAgreed}>
+        <Md type="submit" disabled={busy || !ready || !allAgreed}>
           {busy ? "신청 중…" : "예약 신청"}
         </Md>
       </form>
